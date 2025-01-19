@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+// SignUp.jsx
+import React, { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { signUpUser } from '../../utils/api';
+import { signUpUser } from '../../utils/api'; // Assuming you already have this API function
 
 const SignUp = () => {
   const navigate = useNavigate();
@@ -41,13 +42,13 @@ const SignUp = () => {
 
       if (response.success) {
         alert('Sign Up successful!');
-        navigate('/login'); // Redirect to login page after successful signup
+        navigate('/Login')
       } else {
         alert(response.message || 'Sign Up failed!');
       }
     } catch (error) {
       console.error('Error signing up:', error);
-      alert(error.response?.data?.message || 'Something went wrong. Please try again.');
+      alert('Something went wrong. Please try again.');
     } finally {
       setLoading(false);
     }

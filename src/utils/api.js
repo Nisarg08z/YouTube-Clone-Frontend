@@ -1,12 +1,15 @@
 export const fetchAPI = async (endpoint, options = {}) => {
   const BASE_URL = 'http://localhost:8000/api/v1/';
+  const { method = 'GET', body = null, requireAuth = false } = options;
 
-  const { method = 'GET', body = null } = options;
+  // Get the token from local storage (or context/state if you're using that)
+  const token = requireAuth ? localStorage.getItem('accessToken') : null;
 
   const fetchOptions = {
     method,
     headers: {
       'Content-Type': 'application/json',
+      ...(requireAuth && token ? { 'Authorization': `Bearer ${token}` } : {}),
       ...(options.headers || {}),
     },
     body: body ? JSON.stringify(body) : null,
@@ -16,11 +19,7 @@ export const fetchAPI = async (endpoint, options = {}) => {
     const response = await fetch(`${BASE_URL}${endpoint}`, fetchOptions);
 
     if (!response.ok) {
-      throw new Error('API request failed');
-    }
-
-    if (method === 'GET') {
-      return response.json();
+      throw new Error(`Error: ${response.statusText}`);
     }
 
     return response.json();
@@ -30,10 +29,32 @@ export const fetchAPI = async (endpoint, options = {}) => {
   }
 };
 
-export const getVideos = async () => {
-  return fetchAPI('videos');
+// Login API
+export const loginUser = async (formData) => {
+  const data = await fetchAPI('users/login', {
+    method: 'POST',
+    body: formData,
+  });
+  return data;
 };
 
+// Logout API
+
+export const logoutUser = async () => {
+
+  return fetchAPI('users/logout', {
+    method: 'POST',
+    requireAuth: true,
+  });
+};
+
+
+// Example API usage to fetch videos
+export const getVideos = async () => {
+  return fetchAPI('videos', { requireAuth: true }); // Use access token for auth
+};
+
+// Example API usage to sign up
 export const signUpUser = async (formData) => {
   return fetchAPI('users/register', {
     method: 'POST',
@@ -41,9 +62,7 @@ export const signUpUser = async (formData) => {
   });
 };
 
-export const loginUser = async (formData) => {
-  return fetchAPI('users/login', {
-    method: 'POST',
-    body: formData,
-  });
+// API to fetch the current user
+export const fetchCurrentUser = async () => {
+  return fetchAPI('users/current-user', { requireAuth: true }); // Use token for current user
 };

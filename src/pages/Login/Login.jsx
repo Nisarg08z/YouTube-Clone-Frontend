@@ -1,9 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { loginUser } from '../../utils/api';
+import { UserContext } from '../../contexts/UserContext';
 
 const Login = () => {
   const navigate = useNavigate();
+  const { isLogedin, setisLogedin } = useContext(UserContext);
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -34,7 +36,9 @@ const Login = () => {
       const response = await loginUser(formData);
 
       if (response.success) {
+        setisLogedin(true)
         alert('Login successful!');
+        console.log(response.user)
         navigate('/');
       } else {
         alert(response.message || 'Login failed!');
