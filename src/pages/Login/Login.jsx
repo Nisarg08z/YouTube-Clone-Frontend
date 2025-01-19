@@ -34,7 +34,7 @@ const Login = () => {
     try {
       setLoading(true);
       const response = await loginUser(formData);
-
+      console.log(response)
       if (response.success) {
         setisLogedin(true)
         alert('Login successful!');

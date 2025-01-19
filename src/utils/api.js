@@ -1,5 +1,5 @@
 export const fetchAPI = async (endpoint, options = {}) => {
-  const BASE_URL = 'http://localhost:8000/api/v1/';
+  const BASE_URL = 'http://localhost:8001/api/v1/';
   const { method = 'GET', body = null, requireAuth = false } = options;
 
   // Get the token from local storage (or context/state if you're using that)
@@ -30,13 +30,22 @@ export const fetchAPI = async (endpoint, options = {}) => {
 };
 
 // Login API
+import axios from 'axios';
+
 export const loginUser = async (formData) => {
-  const data = await fetchAPI('users/login', {
-    method: 'POST',
-    body: formData,
-  });
-  return data;
+  const response = await axios.post(
+    'http://localhost:8001/api/v1/users/login', // Adjust the URL if needed
+    formData,
+    {
+      withCredentials: true, // Include cookies in the request
+      headers: {
+        'Content-Type': 'application/json', // Ensure proper content type for JSON
+      },
+    }
+  );
+  return response.data; // Return the response data
 };
+
 
 // Logout API
 
