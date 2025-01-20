@@ -1,77 +1,88 @@
-export const fetchAPI = async (endpoint, options = {}) => {
-  const BASE_URL = 'http://localhost:8001/api/v1/';
-  const { method = 'GET', body = null, requireAuth = false } = options;
+import axios from 'axios';
 
-  // Get the token from local storage (or context/state if you're using that)
-  const token = requireAuth ? localStorage.getItem('accessToken') : null;
+const BASE_URL = 'http://localhost:8001/api/v1/';
 
-  const fetchOptions = {
-    method,
-    headers: {
-      'Content-Type': 'application/json',
-      ...(requireAuth && token ? { 'Authorization': `Bearer ${token}` } : {}),
-      ...(options.headers || {}),
-    },
-    body: body ? JSON.stringify(body) : null,
-  };
-
+// Login API
+export const loginUser = async (formData) => {
   try {
-    const response = await fetch(`${BASE_URL}${endpoint}`, fetchOptions);
-
-    if (!response.ok) {
-      throw new Error(`Error: ${response.statusText}`);
-    }
-
-    return response.json();
+    const response = await axios.post(
+      `${BASE_URL}users/login`,
+      formData,
+      {
+        withCredentials: true,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+    return response.data;
   } catch (error) {
-    console.error('API Error:', error.message);
-    throw error;
+    console.error('API Error:', error.response?.data?.message || error.message);
+    throw error.response?.data || error;
   }
 };
 
-// Login API
-import axios from 'axios';
-
-export const loginUser = async (formData) => {
-  const response = await axios.post(
-    'http://localhost:8001/api/v1/users/login', // Adjust the URL if needed
-    formData,
-    {
-      withCredentials: true, // Include cookies in the request
-      headers: {
-        'Content-Type': 'application/json', // Ensure proper content type for JSON
-      },
-    }
-  );
-  return response.data; // Return the response data
-};
-
-
 // Logout API
-
 export const logoutUser = async () => {
-
-  return fetchAPI('users/logout', {
-    method: 'POST',
-    requireAuth: true,
-  });
+  try {
+    const response = await axios.post(
+      `${BASE_URL}users/logout`,
+      {},
+      {
+        withCredentials: true,
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error('API Error:', error.response?.data?.message || error.message);
+    throw error.response?.data || error;
+  }
 };
 
-
-// Example API usage to fetch videos
+// API fetch videos
 export const getVideos = async () => {
-  return fetchAPI('videos', { requireAuth: true }); // Use access token for auth
+  try {
+    const response = await axios.get(`${BASE_URL}videos`, {
+      withCredentials: true,
+    });
+    return response.data;
+  } catch (error) {
+    console.error('API Error:', error.response?.data?.message || error.message);
+    throw error.response?.data || error;
+  }
 };
 
-// Example API usage to sign up
+// API sign up
 export const signUpUser = async (formData) => {
-  return fetchAPI('users/register', {
-    method: 'POST',
-    body: formData,
-  });
+  try {
+    const response = await axios.post(
+      `${BASE_URL}users/register`,
+      formData,
+      {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error('API Error:', error.response?.data?.message || error.message);
+    throw error.response?.data || error;
+  }
 };
 
-// API to fetch the current user
+// API fetch current user
 export const fetchCurrentUser = async () => {
-  return fetchAPI('users/current-user', { requireAuth: true }); // Use token for current user
+  try {
+    const response = await axios.get(
+      `${BASE_URL}users/current-user`,
+      {
+        withCredentials: true,
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error('API Error:', error.response?.data?.message || error.message);
+    throw error.response?.data || error;
+  }
 };

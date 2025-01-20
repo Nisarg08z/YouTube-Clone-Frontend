@@ -6,6 +6,8 @@ import { UserContext } from '../../contexts/UserContext';
 const Login = () => {
   const navigate = useNavigate();
   const { isLogedin, setisLogedin } = useContext(UserContext);
+  const { userDetail, setuserDetail } = useContext(UserContext);
+
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -37,6 +39,7 @@ const Login = () => {
       console.log(response)
       if (response.success) {
         setisLogedin(true)
+        setuserDetail(response.data.user)
         alert('Login successful!');
         console.log(response.user)
         navigate('/');
