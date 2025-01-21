@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const BASE_URL = 'http://localhost:8001/api/v1/';
+const BASE_URL = 'http://localhost:8000/api/v1/';
 
 // Login API
 export const loginUser = async (formData) => {
@@ -45,7 +45,8 @@ export const getVideos = async () => {
     const response = await axios.get(`${BASE_URL}videos`, {
       withCredentials: true,
     });
-    return response.data;
+    console.log(response.data.message.docs)
+    return response.data.message.docs;
   } catch (error) {
     console.error('API Error:', error.response?.data?.message || error.message);
     throw error.response?.data || error;

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Sidebar, Header, VideoGrid, EmptyState } from '../../components';
+import { VideoGrid, EmptyState } from '../../components';
 import { useVideoContext } from '../../contexts/VideoContext';
 
 const HomePage = () => {
