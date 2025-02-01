@@ -22,6 +22,7 @@ const Header = () => {
     }
   };
 
+
   const toggleDropdown = () => {
     setIsDropdownOpen((prevState) => !prevState);
   };
@@ -42,7 +43,7 @@ const Header = () => {
       document.removeEventListener('click', handleOutsideClick);
     };
   }, [isDropdownOpen]);
-
+  
   return (
     <header className="flex justify-between items-center px-4 py-2 bg-gray-900 border-b border-gray-700">
       <input

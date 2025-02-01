@@ -45,7 +45,7 @@ export const getVideos = async () => {
     const response = await axios.get(`${BASE_URL}videos`, {
       withCredentials: true,
     });
-    console.log(response.data.message.docs)
+    //console.log(response.data.message.docs)
     return response.data.message.docs;
   } catch (error) {
     console.error('API Error:', error.response?.data?.message || error.message);
@@ -77,6 +77,22 @@ export const fetchCurrentUser = async () => {
   try {
     const response = await axios.get(
       `${BASE_URL}users/current-user`,
+      {
+        withCredentials: true,
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error('API Error:', error.response?.data?.message || error.message);
+    throw error.response?.data || error;
+  }
+};
+
+export const refreshAccessToken = async () => {
+  try {
+    const response = await axios.post(
+      `${BASE_URL}users/refresh-token`,
+      {},
       {
         withCredentials: true,
       }

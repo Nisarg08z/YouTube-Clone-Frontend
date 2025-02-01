@@ -36,7 +36,8 @@ const Login = () => {
     try {
       setLoading(true);
       const response = await loginUser(formData);
-      console.log(response)
+      localStorage.setItem("token" , response.data.accessToken)
+      console.log(localStorage.getItem("token"))
       if (response.success) {
         setisLogedin(true)
         setuserDetail(response.data.user)
