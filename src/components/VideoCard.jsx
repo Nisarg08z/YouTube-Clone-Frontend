@@ -1,5 +1,6 @@
 import React from 'react';
 import { formatDistanceToNow } from 'date-fns';
+import { Link } from 'react-router-dom';
 
 const VideoCard = ({ video }) => {
   return (
@@ -29,9 +30,16 @@ const VideoCard = ({ video }) => {
             <h3 className="text-white font-medium text-sm truncate">
               {truncateDescription(video.description)}
             </h3>
-            <p className="text-gray-400 text-xs">
+            <Link
+              to={{
+                pathname: `/profile/${video.uploader.username}`,
+              }}
+              state={{ video }}
+              className="hover:text-gray-400"
+            >
               {video.uploader.fullName}
-            </p>
+            </Link>
+
             <p className="text-gray-400 text-xs">
               {formatViews(video.views)} views • {formatCreatedAt(video.createdAt)}
             </p>

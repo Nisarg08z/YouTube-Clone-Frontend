@@ -1,6 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import { HomePage, SignUp, Login } from './pages';
+import { HomePage, SignUp, Login, Profile } from './pages';
 import Layout from './Layout.jsx'
 
 const App = () => {
@@ -9,11 +9,13 @@ const App = () => {
       <Routes>
         <Route path="/" element={<Layout />}>
           <Route path="" element={<HomePage />} />
+          <Route path="profile/:username" element={<Profile />} />
         </Route>
         <Route path="/signup" element={<SignUp />} />
         <Route path="/login" element={<Login />} />
       </Routes>
     </Router>
+    
   );
 };
 

@@ -1,5 +1,5 @@
 import React, { useContext, useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, Navigate, NavLink, useNavigate } from 'react-router-dom';
 import { UserContext } from '../contexts/UserContext';
 import { logoutUser } from '../utils/api';
 
@@ -22,6 +22,15 @@ const Header = () => {
     }
   };
 
+  const handaleProfile = async () => {
+    try {
+      setIsDropdownOpen(false);
+      navigate(`/profile/${userDetail.username}`);
+    } catch (error) {
+      console.error('Failed to get user profile:', error.message);
+    }
+  }
+
 
   const toggleDropdown = () => {
     setIsDropdownOpen((prevState) => !prevState);
@@ -43,7 +52,7 @@ const Header = () => {
       document.removeEventListener('click', handleOutsideClick);
     };
   }, [isDropdownOpen]);
-  
+
   return (
     <header className="flex justify-between items-center px-4 py-2 bg-gray-900 border-b border-gray-700">
       <input
@@ -73,7 +82,7 @@ const Header = () => {
             </button>
             {/* Dropdown menu, conditionally rendered based on isDropdownOpen */}
             {isDropdownOpen && (
-              <div className="absolute right-0 mt-2 w-48 bg-gray-800 rounded shadow-lg border border-gray-700">
+              <div className="absolute right-0 mt-2 w-48 bg-gray-800 rounded shadow-lg border border-gray-700 z-50">
                 <div className="flex items-center bg-gray-800 rounded-lg p-4">
                   <img
                     src={userDetail.avatar}
@@ -87,6 +96,7 @@ const Header = () => {
                 </div>
                 <hr className="border-gray-700" />
                 <button
+                  onClick={handaleProfile}
                   className="w-full px-4 py-2 text-left hover:bg-gray-700 text-white transition"
                 >
                   Profile
@@ -100,6 +110,7 @@ const Header = () => {
                 </button>
               </div>
             )}
+
           </div>
         )}
       </div>

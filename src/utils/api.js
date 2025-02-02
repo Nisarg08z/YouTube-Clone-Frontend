@@ -88,6 +88,7 @@ export const fetchCurrentUser = async () => {
   }
 };
 
+// API fetch tokens
 export const refreshAccessToken = async () => {
   try {
     const response = await axios.post(
@@ -97,6 +98,41 @@ export const refreshAccessToken = async () => {
         withCredentials: true,
       }
     );
+    return response.data;
+  } catch (error) {
+    console.error('API Error:', error.response?.data?.message || error.message);
+    throw error.response?.data || error;
+  }
+};
+
+// API toggle Subscription
+export const toggleSubscription = async (channelId) => {
+  try {
+    const response = await axios.post(`${BASE_URL}subscription/c/${channelId}/toggle`, {}, { withCredentials: true });
+    return response.data;
+  } catch (error) {
+    console.error('API Error:', error.response?.data?.message || error.message);
+    throw error.response?.data || error;
+  }
+};
+
+// API fetch user profile
+export const getUserProfile = async (username) => {
+  try {
+    const response = await axios.get(`${BASE_URL}users/c/${username}`, { withCredentials: true });
+    console.log(response)
+    return response.data;
+  } catch (error) {
+    console.error('API Error:', error.response?.data?.message || error.message);
+    throw error.response?.data || error;
+  }
+  
+};
+
+// Fetch user videos
+export const getVideoDetails = async (videoId) => {
+  try {
+    const response = await axios.get(`${BASE_URL}videos/${videoId}`, { withCredentials: true });
     return response.data;
   } catch (error) {
     console.error('API Error:', error.response?.data?.message || error.message);
