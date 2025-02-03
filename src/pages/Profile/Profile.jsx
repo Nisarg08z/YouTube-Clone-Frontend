@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { getUserProfile } from "../../utils/api";
-import {VideosList, Playlist, TweetsList, FollowingList} from "../../components/profile";
+import { VideosList, Playlist, TweetsList, FollowingList } from "../../components/profile";
 import { useParams } from "react-router-dom";
 
 const Profile = () => {
@@ -73,10 +73,12 @@ const Profile = () => {
             </div>
 
             {/* Content */}
-            {activeTab === "Videos" && <VideosList />}
-            {activeTab === "Playlist" && <Playlist />}
-            {activeTab === "Tweets" && <TweetsList />}
-            {activeTab === "Following" && <FollowingList />}
+            <div className="pt-4">
+                {activeTab === "Videos" && <VideosList />}
+                {activeTab === "Playlist" && <Playlist />}
+                {activeTab === "Tweets" && <TweetsList />}
+                {activeTab === "Following" && <FollowingList />}
+            </div>
         </div>
     );
 };
