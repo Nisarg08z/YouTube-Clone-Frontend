@@ -1,9 +1,13 @@
-import React from 'react';
+import React , {useEffect} from 'react';
 import { VideoGrid, EmptyState } from '../../components';
 import { useVideoContext } from '../../contexts/VideoContext';
 
 const HomePage = () => {
-  const { videos, loading, error } = useVideoContext();
+  const { allvideos, loading, error , fetchAllVideos} = useVideoContext();
+
+  useEffect(() => {
+    fetchAllVideos();
+  }, []);
 
   return (
     <div>
@@ -11,8 +15,8 @@ const HomePage = () => {
         <div className="text-center">Loading...</div>
       ) : error ? (
         <div className="text-center text-red-500">{error}</div>
-      ) : videos.length > 0 ? (
-        <VideoGrid videos={videos} />
+      ) : allvideos.length > 0 ? (
+        <VideoGrid videos={allvideos} hideUploader={false} />
       ) : (
         <EmptyState />
       )}

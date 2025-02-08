@@ -2,7 +2,7 @@ import React from 'react';
 import { formatDistanceToNow } from 'date-fns';
 import { Link } from 'react-router-dom';
 
-const VideoCard = ({ video }) => {
+const VideoCard = ({ video, hideUploader = false }) => {
   return (
     <div className="bg-gray-800 rounded-lg overflow-hidden shadow-lg w-72">
       {/* Thumbnail Section */}
@@ -20,25 +20,26 @@ const VideoCard = ({ video }) => {
       {/* Video Details */}
       <div className="p-3">
         <div className="flex items-start space-x-3">
-          {/* Avatar */}
-          <img
-            src={video.uploader.avatar}
-            alt="avatar image"
-            className="w-10 h-10 rounded-full object-cover"
-          />
+          {!hideUploader && (
+            <img
+              src={video.uploader?.avatar || "/default-avatar.png"}
+              alt="avatar"
+              className="w-10 h-10 rounded-full object-cover"
+            />
+          )}
           <div className="flex-1">
             <h3 className="text-white font-medium text-sm truncate">
               {truncateDescription(video.description)}
             </h3>
-            <Link
-              to={{
-                pathname: `/profile/${video.uploader.username}`,
-              }}
-              state={{ video }}
-              className="hover:text-gray-400"
-            >
-              {video.uploader.fullName}
-            </Link>
+
+            {!hideUploader && (
+              <Link
+                to={`/profile/${video.uploader?.username || "unknown"}`}
+                className="hover:text-gray-400"
+              >
+                {video.uploader?.fullName || "Unknown User"}
+              </Link>
+            )}
 
             <p className="text-gray-400 text-xs">
               {formatViews(video.views)} views • {formatCreatedAt(video.createdAt)}
@@ -49,6 +50,7 @@ const VideoCard = ({ video }) => {
     </div>
   );
 };
+
 
 // Utility Functions
 const formatDuration = (seconds) => {

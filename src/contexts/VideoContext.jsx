@@ -1,29 +1,42 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { getVideos } from '../utils/api';
+import { getVideos, getUserAllVideos } from '../utils/api';
 
 const VideoContext = createContext();
 
 export const VideoProvider = ({ children }) => {
-  const [videos, setVideos] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [uservideos, setuserVideos] = useState([]);
+  const [allvideos, setallVideos] = useState([]);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  useEffect(() => {
-    const fetchVideos = async () => {
-      try {
-        const data = await getVideos();
-        setVideos(data);
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchVideos();
-  }, []);
+  const fetchAllVideos = async () => {
+    setLoading(true);
+    try {
+      const data = await getVideos();
+      setallVideos(data);
+      console.log("all" , data)
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchUserVideos = async (userId) => {
+    setLoading(true);
+    try {
+      const data = await getUserAllVideos(userId);
+      setuserVideos(data);
+      console.log("user" , data)
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
-    <VideoContext.Provider value={{ videos, loading, error }}>
+    <VideoContext.Provider value={{ uservideos, allvideos, loading, error, fetchAllVideos, fetchUserVideos }}>
       {children}
     </VideoContext.Provider>
   );

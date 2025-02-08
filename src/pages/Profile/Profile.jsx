@@ -7,6 +7,7 @@ const Profile = () => {
     const { username } = useParams();
     const [user, setUser] = useState(null)
     const [activeTab, setActiveTab] = useState("Videos");
+    
     useEffect(() => {
         const fetchUser = async () => {
             try {
@@ -20,7 +21,7 @@ const Profile = () => {
         fetchUser();
     }, [username]);
 
-    console.log("--------------", user)
+    //console.log("--------------", user)
     if (!user) {
         return (
             <div className="flex items-center justify-center min-h-screen text-white">
@@ -74,7 +75,7 @@ const Profile = () => {
 
             {/* Content */}
             <div className="pt-4">
-                {activeTab === "Videos" && <VideosList />}
+                {activeTab === "Videos" && <VideosList userId = {user.data._id}/>}
                 {activeTab === "Playlist" && <Playlist />}
                 {activeTab === "Tweets" && <TweetsList />}
                 {activeTab === "Following" && <FollowingList />}

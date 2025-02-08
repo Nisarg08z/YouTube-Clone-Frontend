@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const BASE_URL = 'http://localhost:8000/api/v1/';
+const BASE_URL = 'http://localhost:8001/api/v1/';
 
 // Login API
 export const loginUser = async (formData) => {
@@ -120,7 +120,7 @@ export const toggleSubscription = async (channelId) => {
 export const getUserProfile = async (username) => {
   try {
     const response = await axios.get(`${BASE_URL}users/c/${username}`, { withCredentials: true });
-    console.log(response)
+    //console.log(response)
     return response.data;
   } catch (error) {
     console.error('API Error:', error.response?.data?.message || error.message);
@@ -129,11 +129,23 @@ export const getUserProfile = async (username) => {
   
 };
 
-// Fetch user videos
+// Fetch video by id
 export const getVideoDetails = async (videoId) => {
   try {
     const response = await axios.get(`${BASE_URL}videos/${videoId}`, { withCredentials: true });
     return response.data;
+  } catch (error) {
+    console.error('API Error:', error.response?.data?.message || error.message);
+    throw error.response?.data || error;
+  }
+};
+
+// Fatch user Videos
+export const getUserAllVideos = async (userId) => {
+  try {
+    const response = await axios.get(`${BASE_URL}videos?userId=${userId}`, { withCredentials: true });
+    console.log("-------------------", response)
+    return response.data.message.docs;
   } catch (error) {
     console.error('API Error:', error.response?.data?.message || error.message);
     throw error.response?.data || error;
