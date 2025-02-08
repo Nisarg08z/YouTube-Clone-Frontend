@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { getUserProfile } from "../../utils/api";
-import { VideosList, Playlist, TweetsList, FollowingList } from "../../components/profile";
+import { VideosList, Playlist, TweetsList, FollowingList } from "../../components/";
 import { useParams } from "react-router-dom";
 
 const Profile = () => {

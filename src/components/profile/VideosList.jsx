@@ -1,5 +1,5 @@
 import React , {useEffect} from "react"
-import { VideoGrid, EmptyState } from '../';
+import { VideoGrid, EmptyHomePage } from '../';
 import { useVideoContext } from '../../contexts/VideoContext';
 
 const VideosList = ({userId}) => {
@@ -25,7 +25,7 @@ const VideosList = ({userId}) => {
       ) : uservideos.length > 0 ? (
         <VideoGrid videos={uservideos}  hideUploader={true}/>
       ) : (
-        <EmptyState />
+        <EmptyHomePage />
       )}
     </div>
     </>

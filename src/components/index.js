@@ -1,14 +1,18 @@
 import Sidebar from "./Sidebar.jsx"
-import VideoCard from "./VideoCard.jsx"
 import Header from "./Header.jsx"
-import EmptyState from "./EmptyState.jsx"
-import VideoGrid from "./VideoGrid.jsx"
+import { EmptyHomePage } from "./EmptysState/"
+import { VideoGrid, VideoCard } from "./VideoCard/"
+import { FollowingList, Playlist, TweetsList, VideosList }from "./Profile/"
 
 export 
 { 
     Sidebar, 
     VideoCard, 
     Header, 
-    EmptyState, 
-    VideoGrid 
+    EmptyHomePage, 
+    VideoGrid,
+    FollowingList,
+    Playlist,
+    TweetsList,
+    VideosList
 }

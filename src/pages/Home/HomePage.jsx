@@ -1,5 +1,5 @@
 import React , {useEffect} from 'react';
-import { VideoGrid, EmptyState } from '../../components';
+import { VideoGrid, EmptyHomePage } from '../../components';
 import { useVideoContext } from '../../contexts/VideoContext';
 
 const HomePage = () => {
@@ -18,7 +18,7 @@ const HomePage = () => {
       ) : allvideos.length > 0 ? (
         <VideoGrid videos={allvideos} hideUploader={false} />
       ) : (
-        <EmptyState />
+        <EmptyHomePage />
       )}
     </div>
   );
