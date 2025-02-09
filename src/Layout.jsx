@@ -1,21 +1,30 @@
-import React from 'react'
-import { Header, Sidebar } from './components'
-import { Outlet } from 'react-router-dom'
+import React, { useState, useEffect } from "react";
+import { Header, Sidebar } from "./components";
+import { Outlet, useLocation } from "react-router-dom";
 
 function Layout() {
-    return (
-        <>
-            <div className="flex h-screen bg-black text-white">
-                <Sidebar />
-                <div className="flex flex-col flex-1">
-                    <Header />
-                    <div className="flex-1 overflow-auto p-4">
-                        <Outlet />
-                    </div>
-                </div>
-            </div>
-        </>
-    )
+  const [hideSidebar, setHideSidebar] = useState(false);
+  const location = useLocation();
+
+  useEffect(() => {
+    if (location.pathname.startsWith("/video/")) {
+      setHideSidebar(true);
+    } else {
+      setHideSidebar(false);
+    }
+  }, [location.pathname]);
+
+  return (
+    <div className="flex h-screen bg-black text-white">
+      <Sidebar hideSidebar={hideSidebar} />
+      <div className="flex flex-col flex-1">
+        <Header />
+        <div className="flex-1 overflow-auto p-4">
+          <Outlet />
+        </div>
+      </div>
+    </div>
+  );
 }
 
-export default Layout
+export default Layout;

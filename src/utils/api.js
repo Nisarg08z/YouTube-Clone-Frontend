@@ -133,7 +133,8 @@ export const getUserProfile = async (username) => {
 export const getVideoDetails = async (videoId) => {
   try {
     const response = await axios.get(`${BASE_URL}videos/${videoId}`, { withCredentials: true });
-    return response.data;
+    //console.log(' ------------------> ', response)
+    return response.data.message;
   } catch (error) {
     console.error('API Error:', error.response?.data?.message || error.message);
     throw error.response?.data || error;
@@ -144,10 +145,80 @@ export const getVideoDetails = async (videoId) => {
 export const getUserAllVideos = async (userId) => {
   try {
     const response = await axios.get(`${BASE_URL}videos?userId=${userId}`, { withCredentials: true });
-    console.log("-------------------", response)
+    //console.log("-------------------", response)
     return response.data.message.docs;
   } catch (error) {
     console.error('API Error:', error.response?.data?.message || error.message);
     throw error.response?.data || error;
   }
 };
+
+// increment video view
+export const incrementVideoView = async (videoId) => {
+  try {
+    const response = await axios.patch(`${BASE_URL}videos/views/${videoId}`, {}, { withCredentials: true });
+    return response.data;
+  } catch (error) {
+    console.error('API Error:', error.response?.data?.message || error.message);
+    throw error.response?.data || error;
+  }
+};
+
+export const addComment = async (videoId, text) => {
+  try {
+    const response = await axios.post(
+      `${BASE_URL}comment/${videoId}`,
+      { text }, 
+      { withCredentials: true }
+    );
+    //console.log("API Response:", response.data);
+    return response.data;
+  } catch (error) {
+    console.error("API Error:", error.response?.data || error);
+    throw error.response?.data || error;
+  }
+};
+
+
+export const fetchComments = async (videoId, page = 1, limit = 10) => {
+  try {
+    const response = await axios.get(
+      `${BASE_URL}comment/${videoId}?page=${page}&limit=${limit}`,
+      { withCredentials: true }
+    );
+
+    if (!response.data || !response.data.success) {
+      console.error("Invalid API response:", response.data);
+      return { comments: [], totalComments: 0 };
+    }
+
+    return {
+      comments: response.data.message?.comments || [],
+      totalComments: response.data.message?.totalComments || 0,
+    };
+  } catch (error) {
+    console.error("API Error:", error.response?.data || error);
+    return { comments: [], totalComments: 0 };
+  }
+};
+
+
+
+export const updateComment = async (commentId, text) => {
+  try {
+    const response = await axios.patch(`${BASE_URL}comment/c/${commentId}`, { text }, { withCredentials: true });
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || error;
+  }
+};
+
+export const deleteComment = async (commentId) => {
+  try {
+    const response = await axios.delete(`${BASE_URL}comment/c/${commentId}`, { withCredentials: true });
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || error;
+  }
+};
+

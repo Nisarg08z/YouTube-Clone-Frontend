@@ -4,53 +4,54 @@ import { Link } from 'react-router-dom';
 
 const VideoCard = ({ video, hideUploader = false }) => {
   return (
-    <div className="bg-gray-800 rounded-lg overflow-hidden shadow-lg w-72">
-      {/* Thumbnail Section */}
-      <div className="relative">
-        <img
-          src={video.thumbnail}
-          alt={video.title}
-          className="w-full h-40 object-cover"
-        />
-        <span className="absolute bottom-2 right-2 bg-black bg-opacity-75 text-white text-xs px-1.5 py-0.5 rounded">
-          {formatDuration(video.duration)}
-        </span>
-      </div>
+    <Link to={`/video/${video._id}`} className="block">
+      <div className="bg-gray-800 rounded-lg overflow-hidden shadow-lg w-72">
+        {/* Thumbnail Section */}
+        <div className="relative">
+          <img
+            src={video.thumbnail}
+            alt={video.title}
+            className="w-full h-40 object-cover"
+          />
+          <span className="absolute bottom-2 right-2 bg-black bg-opacity-75 text-white text-xs px-1.5 py-0.5 rounded">
+            {formatDuration(video.duration)}
+          </span>
+        </div>
 
-      {/* Video Details */}
-      <div className="p-3">
-        <div className="flex items-start space-x-3">
-          {!hideUploader && (
-            <img
-              src={video.uploader?.avatar || "/default-avatar.png"}
-              alt="avatar"
-              className="w-10 h-10 rounded-full object-cover"
-            />
-          )}
-          <div className="flex-1">
-            <h3 className="text-white font-medium text-sm truncate">
-              {truncateDescription(video.description)}
-            </h3>
-
+        {/* Video Details */}
+        <div className="p-3">
+          <div className="flex items-start space-x-3">
             {!hideUploader && (
+              <img
+                src={video.uploader?.avatar}
+                alt="avatar"
+                className="w-10 h-10 rounded-full object-cover"
+              />
+            )}
+            <div className="flex-1">
+              <h3 className="text-white font-medium text-sm truncate">
+                {truncateDescription(video.description)}
+              </h3>
+
+              {!hideUploader && (
               <Link
-                to={`/profile/${video.uploader?.username || "unknown"}`}
+                to={`/profile/${video.uploader?.username}`}
                 className="hover:text-gray-400"
               >
-                {video.uploader?.fullName || "Unknown User"}
+                {video.uploader?.fullName}
               </Link>
             )}
 
-            <p className="text-gray-400 text-xs">
-              {formatViews(video.views)} views • {formatCreatedAt(video.createdAt)}
-            </p>
+              <p className="text-gray-400 text-xs">
+                {formatViews(video.views)} views • {formatCreatedAt(video.createdAt)}
+              </p>
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </Link>
   );
 };
-
 
 // Utility Functions
 const formatDuration = (seconds) => {

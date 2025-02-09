@@ -1,12 +1,11 @@
-import React, { useContext, useState, useEffect } from 'react';
-import { Link, Navigate, NavLink, useNavigate } from 'react-router-dom';
-import { UserContext } from '../contexts/UserContext';
-import { logoutUser } from '../utils/api';
+import React, { useContext, useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { UserContext } from "../contexts/UserContext";
+import { logoutUser } from "../utils/api";
 
 const Header = () => {
   const { isLogedin, setisLogedin } = useContext(UserContext);
   const { userDetail, setuserDetail } = useContext(UserContext);
-
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const navigate = useNavigate();
 
@@ -16,21 +15,16 @@ const Header = () => {
       setisLogedin(false);
       setuserDetail(null);
       setIsDropdownOpen(false);
-      navigate('/');
+      navigate("/");
     } catch (error) {
-      console.error('Logout failed:', error.message);
+      console.error("Logout failed:", error.message);
     }
   };
 
-  const handaleProfile = async () => {
-    try {
-      setIsDropdownOpen(false);
-      navigate(`/profile/${userDetail.username}`);
-    } catch (error) {
-      console.error('Failed to get user profile:', error.message);
-    }
-  }
-
+  const handleProfile = () => {
+    setIsDropdownOpen(false);
+    navigate(`/profile/${userDetail.username}`);
+  };
 
   const toggleDropdown = () => {
     setIsDropdownOpen((prevState) => !prevState);
@@ -39,28 +33,36 @@ const Header = () => {
   // Close dropdown when clicking outside
   useEffect(() => {
     const handleOutsideClick = (event) => {
-      if (!event.target.closest('.dropdown-menu')) {
+      if (!event.target.closest(".dropdown-menu")) {
         setIsDropdownOpen(false);
       }
     };
 
     if (isDropdownOpen) {
-      document.addEventListener('click', handleOutsideClick);
+      document.addEventListener("click", handleOutsideClick);
     }
 
     return () => {
-      document.removeEventListener('click', handleOutsideClick);
+      document.removeEventListener("click", handleOutsideClick);
     };
   }, [isDropdownOpen]);
 
   return (
-    <header className="flex justify-between items-center px-4 py-2 bg-gray-900 border-b border-gray-700">
-      <input
-        type="text"
-        placeholder="Search"
-        className="flex-1 p-2 mr-4 bg-gray-800 text-white rounded outline-none"
-      />
-      <div className="flex items-center space-x-4">
+    <header className="flex items-center justify-between px-4 py-1 bg-gray-900 border-b border-gray-700">
+      {/* Empty div to maintain alignment */}
+      <div className="w-1/4"></div>
+
+      {/* Centered Search Bar */}
+      <div className="flex-1 flex justify-center">
+        <input
+          type="text"
+          placeholder="Search"
+          className="w-3/4 p-1 text-sm text-c bg-gray-800 text-white rounded-md outline-none border border-gray-600 focus:border-purple-500 transition"
+        />
+      </div>
+
+      {/* Right Side: User Profile / Login */}
+      <div className="w-1/4 flex justify-end items-center space-x-4">
         {!isLogedin ? (
           <Link to="/Login">
             <button className="px-4 py-2 bg-purple-600 text-white rounded hover:bg-purple-700 transition">
@@ -69,7 +71,6 @@ const Header = () => {
           </Link>
         ) : (
           <div className="relative dropdown-menu">
-            {/* Avatar button to toggle dropdown */}
             <button
               className="flex items-center justify-center w-11 h-11 rounded-full"
               onClick={toggleDropdown}
@@ -80,7 +81,7 @@ const Header = () => {
                 className="w-full h-full object-cover"
               />
             </button>
-            {/* Dropdown menu, conditionally rendered based on isDropdownOpen */}
+
             {isDropdownOpen && (
               <div className="absolute right-0 mt-2 w-48 bg-gray-800 rounded shadow-lg border border-gray-700 z-50">
                 <div className="flex items-center bg-gray-800 rounded-lg p-4">
@@ -96,7 +97,7 @@ const Header = () => {
                 </div>
                 <hr className="border-gray-700" />
                 <button
-                  onClick={handaleProfile}
+                  onClick={handleProfile}
                   className="w-full px-4 py-2 text-left hover:bg-gray-700 text-white transition"
                 >
                   Profile
@@ -110,7 +111,6 @@ const Header = () => {
                 </button>
               </div>
             )}
-
           </div>
         )}
       </div>
