@@ -1,32 +1,23 @@
 import React, { useState, useEffect, useContext } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { getVideoDetails, incrementVideoView } from "../../utils/api";
-import { VideoDetails, CommentSection } from "../../components";
+import { VideoDetails, CommentSection, VideoGrid } from "../../components";
 import { UserContext } from "../../contexts/UserContext";
+import { useVideoContext } from '../../contexts/VideoContext';
+
 
 const VideoPlayer = () => {
   const { videoId } = useParams();
   const [video, setVideo] = useState(null);
+  const { userDetail } = useContext(UserContext);
   const [loading, setLoading] = useState(true);
-  const { isLogedin, userDetail } = useContext(UserContext);
-  const navigate = useNavigate();
-  const [authChecked, setAuthChecked] = useState(false);
+  const { allvideos, error, fetchAllVideos } = useVideoContext();
 
   useEffect(() => {
-    if (userDetail !== null) {
-      setAuthChecked(true);
-    }
-  }, [userDetail]);
+    fetchAllVideos();
+  }, []);
 
   useEffect(() => {
-    if (authChecked && !isLogedin) {
-      navigate("/login");
-    }
-  }, [authChecked, isLogedin, navigate]);
-
-  useEffect(() => {
-    if (!authChecked) return;
-
     const fetchVideo = async () => {
       try {
         const data = await getVideoDetails(videoId);
@@ -39,31 +30,45 @@ const VideoPlayer = () => {
     };
 
     fetchVideo();
-  }, [videoId, authChecked]);
+  }, [videoId]);
 
-  if (!authChecked) {
-    return <div className="text-white text-center p-6">Checking authentication...</div>;
-  }
-
-  if (loading) {
-    return <div className="text-white text-center p-6">Loading video...</div>;
-  }
+  if (loading) return <p>Loading...</p>;
+  if (!video) return <p>Video not found</p>;
 
   return (
-    <div className="min-h-screen p-2">
-      <video controls onPlay={() => incrementVideoView(videoId)} className="w-full max-w-4xl rounded-lg shadow-lg">
-        <source src={video.videoFile} type="video/mp4" />
-      </video>
-
-      <div className="pt-4">
-        <VideoDetails video={video} />
+    <div className="min-h-screen p-2 flex flex-col md:flex-row gap-4">
+      {/* Left Section - Video Player */}
+      <div className="w-[65%]">
+        <video
+          controls
+          onPlay={() => incrementVideoView(videoId)}
+          className="w-full rounded-lg shadow-lg"
+        >
+          <source src={video.videoFile} type="video/mp4" />
+        </video>
+  
+        <div className="pt-4">
+          <VideoDetails video={video} />
+        </div>
+  
+        <div className="pt-4">
+          <CommentSection videoId={videoId} currentUser={userDetail?._id} videoOwner={video?.owner} />
+        </div>
       </div>
-
-      <div className="pt-4">
-        <CommentSection videoId={videoId} currentUser={userDetail?._id} videoOwner={video?.owner} />
+  
+      {/* Right Section - Extend VideoGrid Fully */}
+      <div className="w-[35%] flex flex-col overflow-hidden">
+        {loading ? (
+          <div className="text-center">Loading...</div>
+        ) : error ? (
+          <div className="text-center text-red-500">{error}</div>
+        ) : (
+          <VideoGrid videos={allvideos} hideUploader={false} isHorizontal={true} />
+        )}
       </div>
     </div>
   );
-};
+  
+}
 
 export default VideoPlayer;

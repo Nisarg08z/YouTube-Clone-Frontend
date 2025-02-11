@@ -36,7 +36,7 @@ const VideoDetails = ({ video }) => {
     }, [video?.uploader?.username]);
 
     return (
-        <div className="bg-black max-w-4xl text-white p-4 rounded-lg border border-gray-700 relative transition-all duration-300">
+        <div className="bg-black w-full text-white p-4 rounded-lg border border-gray-700 relative transition-all duration-300">
             {/* Title and Views */}
             <p className="text-lg font-bold break-words h-auto w-[75%]">
                 {video?.description?.slice(0, maxLength) || "No Description"}
