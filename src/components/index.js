@@ -1,7 +1,7 @@
 import Sidebar from "./Sidebar.jsx"
 import Header from "./Header.jsx"
 import { EmptyHomePage } from "./EmptysState/"
-import { VideoGrid, VideoCard, VideoDetails, CommentSection } from "./VideoCard/"
+import { VideoGrid, VideoCard, VideoDetails, CommentSection, VideoPlayer } from "./VideoCard/"
 import { FollowingList, Playlist, TweetsList, VideosList }from "./Profile/"
 
 export 
@@ -16,5 +16,6 @@ export
     TweetsList,
     VideosList,
     VideoDetails,
-    CommentSection
+    CommentSection,
+    VideoPlayer
 }

@@ -1,12 +1,12 @@
 import React, { useState, useEffect, useContext } from "react";
 import { useParams } from "react-router-dom";
-import { getVideoDetails, incrementVideoView } from "../../utils/api";
-import { VideoDetails, CommentSection, VideoGrid } from "../../components";
+import { getVideoDetails } from "../../utils/api";
+import { VideoDetails, CommentSection, VideoGrid, VideoPlayer } from "../../components";
 import { UserContext } from "../../contexts/UserContext";
 import { useVideoContext } from '../../contexts/VideoContext';
 
 
-const VideoPlayer = () => {
+const VideoPage = () => {
   const { videoId } = useParams();
   const [video, setVideo] = useState(null);
   const { userDetail } = useContext(UserContext);
@@ -39,23 +39,20 @@ const VideoPlayer = () => {
     <div className="min-h-screen p-2 flex flex-col md:flex-row gap-4">
       {/* Left Section - Video Player */}
       <div className="w-[65%]">
-        <video
-          controls
-          onPlay={() => incrementVideoView(videoId)}
-          className="w-full rounded-lg shadow-lg"
-        >
-          <source src={video.videoFile} type="video/mp4" />
-        </video>
-  
+
+        <div>
+          <VideoPlayer video={video} />
+        </div>
+
         <div className="pt-4">
           <VideoDetails video={video} />
         </div>
-  
+
         <div className="pt-4">
           <CommentSection videoId={videoId} currentUser={userDetail?._id} videoOwner={video?.owner} />
         </div>
       </div>
-  
+
       {/* Right Section - Extend VideoGrid Fully */}
       <div className="w-[35%] flex flex-col overflow-hidden">
         {loading ? (
@@ -68,7 +65,7 @@ const VideoPlayer = () => {
       </div>
     </div>
   );
-  
+
 }
 
-export default VideoPlayer;
+export default VideoPage;

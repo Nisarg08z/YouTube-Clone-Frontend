@@ -2,7 +2,7 @@ import HomePage from './Home/HomePage'
 import SignUp from './SignUp/SignUp'
 import Login from './Login/Login'
 import Profile from './Profile/Profile'
-import VideoPlayer from './VideoPlayer/VideoPlayer'
+import VideoPage from './VideoPlayer/VideoPage'
 
 export
 {
@@ -10,5 +10,5 @@ export
     SignUp,
     Login,
     Profile,
-    VideoPlayer
+    VideoPage
 }
