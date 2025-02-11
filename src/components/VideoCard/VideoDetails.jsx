@@ -67,8 +67,9 @@ const VideoDetails = ({ video }) => {
             {/* Buttons Section */}
             <div className="absolute top-4 right-4 flex flex-col items-end space-y-2">
                 <div className="flex space-x-2 pb-2">
-                    <button className="bg-gray-800 px-3 py-1 rounded-lg text-white">
+                    <button className="bg-gray-800 px-4 py-1 rounded-lg text-white flex items-center">
                         <img src="/assets/icons/liked.png" alt="liked" className="h-6" />
+                        <span className="ml-2">0</span>
                     </button>
                     <button className="bg-gray-800 px-4 py-2 rounded-lg text-white flex items-center">
                         <img src="/assets/icons/collection.png" alt="collection" className="h-6" />

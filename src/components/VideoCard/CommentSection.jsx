@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { addComment, fetchComments, updateComment, deleteComment } from "../../utils/api";
 import { Link } from "react-router-dom";
+import { formatDistanceToNow } from "date-fns";
 
 const CommentSection = ({ videoId, currentUser, videoOwner }) => {
   const [comments, setComments] = useState([]);
@@ -43,6 +44,10 @@ const CommentSection = ({ videoId, currentUser, videoOwner }) => {
       if (b.owner?._id === videoOwner && a.owner?._id !== videoOwner) return 1;
       return new Date(b.createdAt) - new Date(a.createdAt);
     });
+  };
+
+  const formatCreatedAt = (createdAt) => {
+      return createdAt ? formatDistanceToNow(new Date(createdAt)) + " ago" : "N/A";
   };
 
   const handleAddOrUpdateComment = async () => {
@@ -136,7 +141,7 @@ const CommentSection = ({ videoId, currentUser, videoOwner }) => {
                   <p className="text-white font-semibold text-sm sm:text-base">
                     {comment.owner?.fullName}
                     <span className="text-gray-400 text-xs sm:text-sm ml-2">
-                      • {new Date(comment.createdAt).toLocaleTimeString()}
+                      • {formatCreatedAt(comment?.createdAt)}
                     </span>
                   </p>
                   <Link
