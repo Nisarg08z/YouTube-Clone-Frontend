@@ -32,6 +32,8 @@ const VideoPage = () => {
     fetchVideo();
   }, [videoId]);
 
+  console.log("video" , video)
+
   if (loading) return <p>Loading...</p>;
   if (!video) return <p>Video not found</p>;
 

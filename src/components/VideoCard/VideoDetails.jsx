@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { formatDistanceToNow } from "date-fns";
-import { getUserProfile } from "../../utils/api";
+import { getUserProfile, toggleVideoLike } from "../../utils/api";
 import { Link } from "react-router-dom";
 
 // Utility functions
@@ -19,7 +19,12 @@ const VideoDetails = ({ video }) => {
     const [showFull, setShowFull] = useState(false);
     const [user, setUser] = useState(null);
     const maxLength = 70;
+    const [isLiked, setIsLiked] = useState(video?.isLikedByCurrentUser);
+    const [likesCount, setLikesCount] = useState(video?.likesCount);
 
+    console.log("like or not", isLiked)
+
+    // Fetch user profile
     useEffect(() => {
         const fetchUser = async () => {
             if (video?.uploader?.username) {
@@ -31,9 +36,34 @@ const VideoDetails = ({ video }) => {
                 }
             }
         };
-
         fetchUser();
     }, [video?.uploader?.username]);
+
+    useEffect(() => {
+        setIsLiked(video?.isLikedByCurrentUser);
+        setLikesCount(video?.likesCount);
+        console.log(video?.isLikedByCurrentUser)
+    }, [video]);
+    
+
+
+    // Toggle Like/Unlike
+    const handleLikeToggle = async () => {
+        try {
+            const response = await toggleVideoLike(video._id);
+    
+            if (response?.data?.success) {
+                setIsLiked((prev) => !prev);
+                setLikesCount((prev) => (isLiked ? prev - 1 : prev + 1));
+            } else {
+                console.error("Failed to toggle like.");
+            }
+        } catch (error) {
+            console.error("Error toggling like:", error);
+        }
+    };
+    
+    
 
     return (
         <div className="bg-black w-full text-white p-4 rounded-lg border border-gray-700 relative transition-all duration-300">
@@ -50,7 +80,7 @@ const VideoDetails = ({ video }) => {
             </p>
 
             {/* Profile Section */}
-            <Link to={`/profile/${video?.uploader?.username}`} >
+            <Link to={`/profile/${video?.uploader?.username}`}>
                 <div className="flex items-center mt-3">
                     <img
                         src={user?.data?.avatar || "https://via.placeholder.com/40"}
@@ -67,15 +97,23 @@ const VideoDetails = ({ video }) => {
             {/* Buttons Section */}
             <div className="absolute top-4 right-4 flex flex-col items-end space-y-2">
                 <div className="flex space-x-2 pb-2">
-                    <button className="bg-gray-800 px-4 py-1 rounded-lg text-white flex items-center">
-                        <img src="/assets/icons/liked.png" alt="liked" className="h-6" />
-                        <span className="ml-2">0</span>
+                    {/* Like Button */}
+                    <button
+                        onClick={handleLikeToggle}
+                        className={`px-4 py-1 rounded-lg text-white flex items-center ${isLiked ? "bg-blue-600" : "bg-gray-800"}`}
+                    >
+                        <img src={"/assets/icons/liked.png"} alt="like" className="h-6" />
+                        <span className="ml-2">{likesCount}</span>
                     </button>
+
+                    {/* Save Button */}
                     <button className="bg-gray-800 px-4 py-2 rounded-lg text-white flex items-center">
                         <img src="/assets/icons/collection.png" alt="collection" className="h-6" />
                         <span className="ml-2">Save</span>
                     </button>
                 </div>
+
+                {/* Follow Button */}
                 <button className="bg-purple-600 px-4 py-1 rounded-lg">Follow</button>
 
                 {/* "More" Button BELOW Follow */}

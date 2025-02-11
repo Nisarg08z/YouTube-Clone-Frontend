@@ -222,3 +222,13 @@ export const deleteComment = async (commentId) => {
   }
 };
 
+export const toggleVideoLike = async (videoId) => {
+  try {
+      const response = await axios.post(`${BASE_URL}like/toggle/v/${videoId}`, {}, { withCredentials: true });
+      return response;
+  } catch (error) {
+      console.error("toggleVideoLike API Error:", error.response?.data || error);
+  }
+};
+
+
