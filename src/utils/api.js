@@ -263,3 +263,28 @@ export const getLikeVideos = async () => {
   }
 };
 
+export const addToWatchHistory = async (videoId) => {
+  try {
+      const response = await axios.post(`${BASE_URL}users/add/history`, { videoId }, { withCredentials: true });
+      //console.log(response)
+      return response.data;
+  } catch (error) {
+      console.error("addToWatchHistory API Error:", error.response?.data || error);
+      throw error;
+  }
+};
+
+export const getWatchedVideos = async () => {
+  try {
+    const response = await axios.get(`${BASE_URL}users/history`, {
+      withCredentials: true,
+    });
+    //console.log(response.data)
+    return response.data.message;
+  } catch (error) {
+    console.error('API Error:', error.response?.data?.message || error.message);
+    throw error.response?.data || error;
+  }
+};
+
+

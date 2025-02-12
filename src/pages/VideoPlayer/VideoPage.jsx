@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from "react";
 import { useParams } from "react-router-dom";
-import { getVideoDetails } from "../../utils/api";
+import { getVideoDetails , addToWatchHistory} from "../../utils/api";
 import { VideoDetails, CommentSection, VideoGrid, VideoPlayer } from "../../components";
 import { UserContext } from "../../contexts/UserContext";
 import { useVideoContext } from '../../contexts/VideoContext';
@@ -32,7 +32,21 @@ const VideoPage = () => {
     fetchVideo();
   }, [videoId]);
 
-  console.log("video" , video)
+  useEffect(() => {
+    console.log(videoId)
+  
+    const addWatchHistory = async () => {
+      try {
+        await addToWatchHistory(videoId);
+      } catch (error) {
+        console.error("Error adding video to watch history:", error);
+      }
+    };
+  
+    addWatchHistory();
+  }, [videoId]);
+
+  //console.log("video" , video)
 
   if (loading) return <p>Loading...</p>;
   if (!video) return <p>Video not found</p>;
