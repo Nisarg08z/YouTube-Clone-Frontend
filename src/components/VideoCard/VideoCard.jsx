@@ -73,8 +73,9 @@ const formatCreatedAt = (createdAt) => {
   return formatDistanceToNow(new Date(createdAt)) + " ago";
 };
 
-const truncateDescription = (description) => {
+const truncateDescription = (description = "") => {
   return description.length > 27 ? description.slice(0, 27) + "..." : description;
 };
+
 
 export default VideoCard;

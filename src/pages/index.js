@@ -3,6 +3,7 @@ import SignUp from './SignUp/SignUp'
 import Login from './Login/Login'
 import Profile from './Profile/Profile'
 import VideoPage from './VideoPlayer/VideoPage'
+import LikeVideos from './LikeVideos/LikeVideos'
 
 export
 {
@@ -10,5 +11,6 @@ export
     SignUp,
     Login,
     Profile,
-    VideoPage
+    VideoPage,
+    LikeVideos
 }

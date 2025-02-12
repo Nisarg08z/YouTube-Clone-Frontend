@@ -240,4 +240,26 @@ export const isVideosLikeByUser = async (videoId) => {
   }
 };
 
+export const getLikeVideos = async () => {
+  try {
+    const response = await axios.get(`${BASE_URL}like/videos`, {
+      withCredentials: true,
+    });
+
+    const likedVideos = response.data.message.map((item) => ({
+      ...item, 
+      uploader: {
+        username: item.uploader?.username,
+        fullName: item.uploader?.fullName,
+        avatar: item.uploader?.avatar,
+      },
+      likedAt: item.likedAt,
+    }));
+
+    return likedVideos;
+  } catch (error) {
+    console.error("API Error:", error.response?.data?.message || error.message);
+    throw error.response?.data || error;
+  }
+};
 

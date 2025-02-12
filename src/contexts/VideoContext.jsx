@@ -14,7 +14,7 @@ export const VideoProvider = ({ children }) => {
     try {
       const data = await getVideos();
       setallVideos(data);
-      console.log("all" , data)
+      //console.log("all" , data)
     } catch (err) {
       setError(err.message);
     } finally {
