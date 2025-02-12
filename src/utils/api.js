@@ -231,4 +231,13 @@ export const toggleVideoLike = async (videoId) => {
   }
 };
 
+export const isVideosLikeByUser = async (videoId) => {
+  try {
+      const response = await axios.post(`${BASE_URL}like/check/v/${videoId}`, {}, { withCredentials: true });
+      return response.data;
+  } catch (error) {
+      console.error("toggleVideoLike API Error:", error.response?.data || error);
+  }
+};
+
 

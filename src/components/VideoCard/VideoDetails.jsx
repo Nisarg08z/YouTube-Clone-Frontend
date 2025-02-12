@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { formatDistanceToNow } from "date-fns";
-import { getUserProfile, toggleVideoLike } from "../../utils/api";
+import { getUserProfile, toggleVideoLike, isVideosLikeByUser } from "../../utils/api";
 import { Link } from "react-router-dom";
 
 // Utility functions
@@ -19,10 +19,8 @@ const VideoDetails = ({ video }) => {
     const [showFull, setShowFull] = useState(false);
     const [user, setUser] = useState(null);
     const maxLength = 70;
-    const [isLiked, setIsLiked] = useState(video?.isLikedByCurrentUser);
+    const [isLiked, setIsLiked] = useState(null);
     const [likesCount, setLikesCount] = useState(video?.likesCount);
-
-    console.log("like or not", isLiked)
 
     // Fetch user profile
     useEffect(() => {
@@ -39,22 +37,29 @@ const VideoDetails = ({ video }) => {
         fetchUser();
     }, [video?.uploader?.username]);
 
+    // Fetch like status
     useEffect(() => {
-        setIsLiked(video?.isLikedByCurrentUser);
-        setLikesCount(video?.likesCount);
-        console.log(video?.isLikedByCurrentUser)
-    }, [video]);
-    
-
+        const fetchLikeStatus = async () => {
+            try {
+                const data = await isVideosLikeByUser(video._id);
+                setIsLiked(data.statusCode); 
+            } catch (error) {
+                console.error("Error checking like status:", error);
+            }
+        };
+        fetchLikeStatus();
+        setLikesCount(video?.likesCount)
+    }, [video._id]);
 
     // Toggle Like/Unlike
+    
     const handleLikeToggle = async () => {
         try {
             const response = await toggleVideoLike(video._id);
     
             if (response?.data?.success) {
                 setIsLiked((prev) => !prev);
-                setLikesCount((prev) => (isLiked ? prev - 1 : prev + 1));
+                setLikesCount((prev) => (prev !== null ? (isLiked ? prev - 1 : prev + 1) : prev));
             } else {
                 console.error("Failed to toggle like.");
             }
@@ -62,7 +67,6 @@ const VideoDetails = ({ video }) => {
             console.error("Error toggling like:", error);
         }
     };
-    
     
 
     return (
