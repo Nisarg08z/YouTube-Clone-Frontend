@@ -287,4 +287,48 @@ export const getWatchedVideos = async () => {
   }
 };
 
+// Fetch user playlists
+export const getUserPlaylists = async (userId) => {
+  try {
+    const response = await axios.get(`${BASE_URL}playlist/user/${userId}`, {
+      withCredentials: true,
+    });
+    return response.data.message;
+  } catch (error) {
+    console.error("API Error:", error.response?.data?.message || error.message);
+    throw error.response?.data || error;
+  }
+};
+
+// Create a new playlist
+export const createPlaylist = async (name, description) => {
+  try {
+    const response = await axios.post(
+      `${BASE_URL}playlist/`,
+      { name, description },
+      { withCredentials: true }
+    );
+    return response.data.message;
+  } catch (error) {
+    console.error("API Error:", error.response?.data?.message || error.message);
+    throw error.response?.data || error;
+  }
+};
+
+// Save a video to an existing playlist
+export const saveVideoToPlaylist = async (playlistId, videoId) => {
+  try {
+    const response = await axios.patch(
+      `${BASE_URL}playlist/add/${videoId}/${playlistId}`,
+      {}, 
+      { withCredentials: true } 
+    );
+    return response.data.message;
+  } catch (error) {
+    console.error("API Error:", error.response?.data?.message || error.message);
+    throw error.response?.data || error;
+  }
+};
+
+
 

@@ -33,7 +33,7 @@ const VideoPage = () => {
   }, [videoId]);
 
   useEffect(() => {
-    console.log(videoId)
+    //console.log(videoId)
   
     const addWatchHistory = async () => {
       try {
@@ -61,7 +61,7 @@ const VideoPage = () => {
         </div>
 
         <div className="pt-4">
-          <VideoDetails video={video} />
+          <VideoDetails video={video} userId={userDetail?._id}/>
         </div>
 
         <div className="pt-4">
