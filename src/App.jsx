@@ -1,6 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import { HomePage, SignUp, Login, Profile , VideoPage, LikeVideos, WatchHistory} from './pages';
+import { HomePage, SignUp, Login, Profile , VideoPage, LikeVideos, WatchHistory , PlayList} from './pages';
 import Layout from './Layout.jsx';
 
 const App = () => {
@@ -13,6 +13,7 @@ const App = () => {
           <Route path="video/:videoId" element={<VideoPage />} />
           <Route path="like/Videos" element={<LikeVideos />} />
           <Route path="WatchHistory" element={<WatchHistory />} />
+          <Route path="playlist" element={<PlayList />} />
         </Route>
         <Route path="/signup" element={<SignUp />} />
         <Route path="/login" element={<Login />} />

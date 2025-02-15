@@ -91,6 +91,8 @@ const VideoDetails = ({ video, userId }) => {
                     </button>
                 </div>
 
+                <button className="bg-purple-600 px-4 py-1 rounded-lg">Follow</button>
+
                 {video?.description?.length > maxLength && (
                     <button onClick={() => setShowFull(!showFull)} className="text-white mt-2 flex bottom-3">
                         {showFull ? "Show Less" : "More"}
