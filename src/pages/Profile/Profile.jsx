@@ -76,7 +76,7 @@ const Profile = () => {
             {/* Content */}
             <div className="pt-4">
                 {activeTab === "Videos" && <VideosList userId = {user.data._id}/>}
-                {activeTab === "Playlist" && <Playlist />}
+                {activeTab === "Playlist" && <Playlist userId = {user.data._id}/>}
                 {activeTab === "Tweets" && <TweetsList />}
                 {activeTab === "Following" && <FollowingList />}
             </div>

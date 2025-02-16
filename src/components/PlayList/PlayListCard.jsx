@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { editPlayList, deletePlayList } from "../../utils/api";
+import { Link } from "react-router-dom";
 
 function PlayListCard({ playlist }) {
   const [menuOpen, setMenuOpen] = useState(null);
@@ -7,7 +8,7 @@ function PlayListCard({ playlist }) {
   const [isEditing, setIsEditing] = useState(false);
   const [name, setName] = useState(playlist?.name || "");
   const [description, setDescription] = useState(playlist?.description || "");
-  
+
   const menuButtonRef = useRef(null);
   const menuRef = useRef(null);
 
@@ -29,8 +30,8 @@ function PlayListCard({ playlist }) {
     setLoading(true);
     try {
       const updatedData = { name, description };
-await editPlayList(playlist._id, updatedData);
-      setIsEditing(false); 
+      await editPlayList(playlist._id, updatedData);
+      setIsEditing(false);
       window.location.reload();
     } catch (error) {
       console.error(error);
@@ -74,19 +75,21 @@ await editPlayList(playlist._id, updatedData);
 
   return (
     <>
-      <div className="bg-gray-800 rounded-lg overflow-hidden shadow-lg w-full max-w-[18rem] flex flex-col">
-        {/* Playlist Image and Video Count */}
-        <div className="relative aspect-video">
-          <img
-            src="https://res.cloudinary.com/dby0edrrn/image/upload/v1739551543/DALL_E_2025-02-14_22.11.14_-_A_simple_widescreen_video_thumbnail_representing_multiple_videos._The_design_features_a_large_play_button_in_the_center_with_a_minimalistic_dark_backg_yrnplv.webp"
-            alt="playlist cover"
-            className="w-full h-full object-cover"
-          />
-          <span className="absolute bottom-2 right-2 bg-black bg-opacity-75 text-white text-xs px-1.5 py-0.5 rounded">
-            {playlist?.videos?.length || 0} Videos
-          </span>
-        </div>
 
+      <div className="bg-gray-800 rounded-lg overflow-hidden shadow-lg w-full max-w-[18rem] flex flex-col">
+        <Link to={`/playlist/${playlist._id}`} className="block">
+          {/* Playlist Image and Video Count */}
+          <div className="relative aspect-video">
+            <img
+              src="https://res.cloudinary.com/dby0edrrn/image/upload/v1739551543/DALL_E_2025-02-14_22.11.14_-_A_simple_widescreen_video_thumbnail_representing_multiple_videos._The_design_features_a_large_play_button_in_the_center_with_a_minimalistic_dark_backg_yrnplv.webp"
+              alt="playlist cover"
+              className="w-full h-full object-cover"
+            />
+            <span className="absolute bottom-2 right-2 bg-black bg-opacity-75 text-white text-xs px-1.5 py-0.5 rounded">
+              {playlist?.videos?.length || 0} Videos
+            </span>
+          </div>
+        </Link>
         {/* Playlist Name and Menu Button */}
         <div className="p-3 flex justify-between items-center">
           <p className="text-white text-lg font-semibold">{playlist.name}</p>

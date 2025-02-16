@@ -1,9 +1,12 @@
 import React from 'react'
+import { PlayList } from '../../pages';
 
-function Playlist() {
+const Playlist = ({ userId }) => {
   return (
-    <div>Playlist</div>
-  )
+    <>
+      <PlayList userid={userId} />
+    </>
+  );
 }
 
 export default Playlist

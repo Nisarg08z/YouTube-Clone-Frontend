@@ -357,5 +357,17 @@ export const deletePlayList = async (PlayListId) => {
   }
 }
 
+export const getPlaylistById = async (PlayListId) => {
+  try {
+    const response = await axios.get(`${BASE_URL}playlist/${PlayListId}`, 
+      {withCredentials: true,}
+    );
+    return response.data.message;
+  } catch (error) {
+    console.error("API Error:", error.response?.data?.message || error.message);
+    throw error.response?.data || error;
+  }
+}
+
 
 
