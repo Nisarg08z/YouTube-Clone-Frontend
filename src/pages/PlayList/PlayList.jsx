@@ -2,6 +2,7 @@ import React, { useEffect, useContext, useState } from 'react';
 import { getUserPlaylists } from '../../utils/api';
 import { UserContext } from '../../contexts/UserContext';
 import { PlayListGrid } from '../../components/PlayList';
+import { EmptyHomePage } from '../../components/EmptysState'
 
 const PlayList = () =>  {
     const { userDetail } = useContext(UserContext);

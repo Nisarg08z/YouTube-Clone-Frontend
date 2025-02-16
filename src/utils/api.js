@@ -126,7 +126,7 @@ export const getUserProfile = async (username) => {
     console.error('API Error:', error.response?.data?.message || error.message);
     throw error.response?.data || error;
   }
-  
+
 };
 
 // Fetch video by id
@@ -168,7 +168,7 @@ export const addComment = async (videoId, text) => {
   try {
     const response = await axios.post(
       `${BASE_URL}comment/${videoId}`,
-      { text }, 
+      { text },
       { withCredentials: true }
     );
     //console.log("API Response:", response.data);
@@ -224,19 +224,19 @@ export const deleteComment = async (commentId) => {
 
 export const toggleVideoLike = async (videoId) => {
   try {
-      const response = await axios.post(`${BASE_URL}like/toggle/v/${videoId}`, {}, { withCredentials: true });
-      return response;
+    const response = await axios.post(`${BASE_URL}like/toggle/v/${videoId}`, {}, { withCredentials: true });
+    return response;
   } catch (error) {
-      console.error("toggleVideoLike API Error:", error.response?.data || error);
+    console.error("toggleVideoLike API Error:", error.response?.data || error);
   }
 };
 
 export const isVideosLikeByUser = async (videoId) => {
   try {
-      const response = await axios.post(`${BASE_URL}like/check/v/${videoId}`, {}, { withCredentials: true });
-      return response.data;
+    const response = await axios.post(`${BASE_URL}like/check/v/${videoId}`, {}, { withCredentials: true });
+    return response.data;
   } catch (error) {
-      console.error("toggleVideoLike API Error:", error.response?.data || error);
+    console.error("toggleVideoLike API Error:", error.response?.data || error);
   }
 };
 
@@ -247,7 +247,7 @@ export const getLikeVideos = async () => {
     });
 
     const likedVideos = response.data.message.map((item) => ({
-      ...item, 
+      ...item,
       uploader: {
         username: item.uploader?.username,
         fullName: item.uploader?.fullName,
@@ -265,12 +265,12 @@ export const getLikeVideos = async () => {
 
 export const addToWatchHistory = async (videoId) => {
   try {
-      const response = await axios.post(`${BASE_URL}users/add/history`, { videoId }, { withCredentials: true });
-      //console.log(response)
-      return response.data;
+    const response = await axios.post(`${BASE_URL}users/add/history`, { videoId }, { withCredentials: true });
+    //console.log(response)
+    return response.data;
   } catch (error) {
-      console.error("addToWatchHistory API Error:", error.response?.data || error);
-      throw error;
+    console.error("addToWatchHistory API Error:", error.response?.data || error);
+    throw error;
   }
 };
 
@@ -320,8 +320,8 @@ export const saveVideoToPlaylist = async (playlistId, videoId) => {
   try {
     const response = await axios.patch(
       `${BASE_URL}playlist/add/${videoId}/${playlistId}`,
-      {}, 
-      { withCredentials: true } 
+      {},
+      { withCredentials: true }
     );
     return response.data.message;
   } catch (error) {
@@ -329,6 +329,33 @@ export const saveVideoToPlaylist = async (playlistId, videoId) => {
     throw error.response?.data || error;
   }
 };
+
+export const editPlayList = async (PlayListId, data) => {
+  try {
+    const response = await axios.patch(
+      `${BASE_URL}playlist/${PlayListId}`,
+      data,
+      { withCredentials: true }
+    );
+    return response.data.message;
+  } catch (error) {
+    console.error("API Error:", error.response?.data?.message || error.message);
+    throw error.response?.data || error;
+  }
+};
+
+
+export const deletePlayList = async (PlayListId) => {
+  try {
+    const response = await axios.delete(`${BASE_URL}playlist/${PlayListId}`, 
+      {withCredentials: true,}
+    );
+    return response.data.message;
+  } catch (error) {
+    console.error("API Error:", error.response?.data?.message || error.message);
+    throw error.response?.data || error;
+  }
+}
 
 
 
