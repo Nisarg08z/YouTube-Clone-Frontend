@@ -2,23 +2,27 @@ import React, { useEffect, useContext, useState } from 'react';
 import { getUserPlaylists } from '../../utils/api';
 import { UserContext } from '../../contexts/UserContext';
 import { PlayListGrid } from '../../components/PlayList';
-import { EmptyHomePage } from '../../components/EmptysState'
+import { EmptyPlayListPage } from '../../components/EmptysState';
+import { useNavigate } from 'react-router-dom';
 
-const PlayList = ({userid}) =>  {
-    const { userDetail } = useContext(UserContext);
+const PlayList = ({ userid }) => {
+    const { isLogedin, userDetail } = useContext(UserContext);
     const [playlists, setPlaylists] = useState([]);
-    const [error, setError] = useState(null);
     const [loading, setLoading] = useState(true);
+    const navigate = useNavigate();
 
     useEffect(() => {
+        if (!isLogedin) {
+            navigate('/login'); 
+            return;
+        }
 
         if (!userDetail) return;
 
-        const user = userid || userDetail._id
+        const user = userid || userDetail._id;
 
         if (!user) {
             setError("User not found.");
-            setLoading(false);
             return;
         }
 
@@ -28,25 +32,27 @@ const PlayList = ({userid}) =>  {
                 setPlaylists(response);
             } catch (err) {
                 console.error(err);
-                setError("Failed to load playlists.");
             } finally {
                 setLoading(false);
             }
         };
 
-        if (!user) return <div className="text-center">Loading user...</div>;
-
         fetchPlayList();
-    }, [userDetail, userid]); 
+    }, [isLogedin, userDetail, userid, navigate]);
 
-    if (loading) return <div className="text-center">Loading playlists...</div>;
-    if (error) return <div className="text-center text-red-500">{error}</div>;
+    if (loading) {
+        return <div className="text-center">Loading...</div>;
+    }
 
-    return playlists.length > 0 ? (
-        <PlayListGrid playlists={playlists}/>
-    ) : (
-        <EmptyHomePage />
+    return (
+        <div>
+            {playlists.length > 0 ? (
+                <PlayListGrid playlists={playlists} />
+            ) : (
+                <EmptyPlayListPage />
+            )}
+        </div>
     );
-}
+};
 
 export default PlayList;
