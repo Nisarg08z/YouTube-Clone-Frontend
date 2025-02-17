@@ -27,7 +27,7 @@ export const VideoProvider = ({ children }) => {
     try {
       const data = await getUserAllVideos(userId);
       setuserVideos(data);
-      console.log("user" , data)
+      //console.log("user" , data)
     } catch (err) {
       setError(err.message);
     } finally {

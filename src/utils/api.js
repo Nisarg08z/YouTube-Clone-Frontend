@@ -369,5 +369,12 @@ export const getPlaylistById = async (PlayListId) => {
   }
 }
 
-
+export const isChannelFollowedBysubscriber = async (channelId) => {
+  try {
+    const response = await axios.post(`${BASE_URL}subscription/check/c/${channelId}`, {}, { withCredentials: true });
+    return response.data;
+  } catch (error) {
+    console.error("toggleVideoLike API Error:", error.response?.data || error);
+  }
+};
 
