@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const BASE_URL = 'http://localhost:8001/api/v1/';
+const BASE_URL = 'http://localhost:8000/api/v1/';
 
 // Login API
 export const loginUser = async (formData) => {
@@ -378,3 +378,28 @@ export const isChannelFollowedBysubscriber = async (channelId) => {
   }
 };
 
+export const getSubscribedChannels = async () => {
+  try {
+    const response = await axios.get(`${BASE_URL}subscription/user/subscribed`, {
+      withCredentials: true,
+    });
+    //console.log(response.data.message)
+    return response.data.message;
+  } catch (error) {
+    console.error("API Error:", error.response?.data?.message || error.message);
+    throw new Error(error.response?.data?.message || "Failed to fetch channels");
+  }
+};
+
+export const getuserchannelsubscribers = async (channelId) => {
+  try {
+    const response = await axios.get(`${BASE_URL}subscription/c/${channelId}/subscribers`, {
+      withCredentials: true,
+    });
+
+    return response.data.message;
+  } catch (error) {
+    console.error("API Error:", error.response?.data?.message || error.message);
+    throw new Error(error.response?.data?.message || "Failed to fetch subscribers");
+  }
+};

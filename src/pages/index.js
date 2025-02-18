@@ -6,6 +6,7 @@ import VideoPage from './VideoPlayer/VideoPage'
 import LikeVideos from './LikeVideos/LikeVideos'
 import WatchHistory from './WatchHistory/WatchHistory'
 import PlayList from './PlayList/PlayList'
+import Subscribers from "./Subscribers/Subscribers"
 
 export
 {
@@ -16,5 +17,6 @@ export
     VideoPage,
     LikeVideos,
     WatchHistory,
-    PlayList
+    PlayList,
+    Subscribers
 }

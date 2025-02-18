@@ -28,16 +28,19 @@ const Profile = () => {
 
     useEffect(() => {
         const fetchFollowStatus = async () => {
-            try {
-                const data = await isChannelFollowedBysubscriber(user._id);
-                setIsFollowed(data?.statusCode);
-            } catch (error) {
-                console.error("Error checking Follow status:", error);
+            if (user?._id) { 
+                try {
+                    const data = await isChannelFollowedBysubscriber(user._id);
+                    setIsFollowed(data?.statusCode);
+                } catch (error) {
+                    console.error("Error checking Follow status:", error);
+                }
             }
         };
-
+    
         fetchFollowStatus();
     }, [user?._id]);
+    
 
     useEffect(() => {
         if (user?.subscribersCount !== undefined) {
@@ -133,8 +136,8 @@ const Profile = () => {
             <div className="pt-4">
                 {activeTab === "Videos" && <VideosList userId={user?._id} />}
                 {activeTab === "Playlist" && <Playlist userId={user?._id} />}
-                {activeTab === "Tweets" && <TweetsList />}
-                {activeTab === "Following" && <FollowingList />}
+                {activeTab === "Tweets" && <TweetsList userId={user?._id} />}
+                {activeTab === "Following" && <FollowingList userId={user?._id} isProfile='true'/>}
             </div>
         </div>
     );

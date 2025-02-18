@@ -1,19 +1,18 @@
 import { useEffect, useState } from "react";
-import { SubscriberGrid } from "../";
-import { getuserchannelsubscribers } from "../../utils/api";
-import { EmptyFollowPage } from "../";
+import { getSubscribedChannels } from "../../utils/api";
+import { EmptyFollowPage, SubscriberGrid } from "../../components"
 
-const FollowingList = ({ userId, isProfile }) => {
-  const [subscribers, setSubscribers] = useState([]);
+const Subscribers = () => {
+  const [channels, setChannels] = useState([]);
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const fetchChannelSubscribers = async () => {
+    const fetchChannels = async () => {
       try {
-        const data = await getuserchannelsubscribers(userId);
-        setSubscribers(data || []);
+        const data = await getSubscribedChannels();
+        setChannels(data || []);
       } catch (err) {
         setError(err.message);
       } finally {
@@ -21,14 +20,18 @@ const FollowingList = ({ userId, isProfile }) => {
       }
     };
 
-    fetchChannelSubscribers();
-  }, [userId]);
+    fetchChannels();
+  }, []);
 
-  const filteredSubscribers = Array.isArray(subscribers)
-    ? subscribers.filter((subscriber) =>
-        subscriber.subscriber?.username?.toLowerCase().includes(search.toLowerCase())
+  //console.log(channels)
+
+  const filteredChannels = Array.isArray(channels)
+    ? channels.filter((channel) =>
+        channel.channel?.username?.toLowerCase().includes(search.toLowerCase())
       )
     : [];
+
+    //console.log(filteredChannels)
 
   return (
     <div className="w-full max-w-4xl mx-auto p-4">
@@ -44,8 +47,8 @@ const FollowingList = ({ userId, isProfile }) => {
         <p className="text-center text-white">Loading...</p>
       ) : error ? (
         <p className="text-center text-red-500">{error}</p>
-      ) : filteredSubscribers.length > 0 ? (
-        <SubscriberGrid Subscribers={filteredSubscribers} isProfile={isProfile}/>
+      ) : filteredChannels.length > 0 ? (
+        <SubscriberGrid Subscribers={filteredChannels} />
       ) : (
         <EmptyFollowPage />
       )}
@@ -53,4 +56,4 @@ const FollowingList = ({ userId, isProfile }) => {
   );
 };
 
-export default FollowingList;
+export default Subscribers;

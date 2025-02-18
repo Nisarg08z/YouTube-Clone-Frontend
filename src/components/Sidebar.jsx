@@ -8,7 +8,7 @@ const Sidebar = ({ hideSidebar }) => {
     { name: "History", icon: "history.png", path: "/WatchHistory" },
     { name: "My Content", icon: "content.png", path: "/" },
     { name: "Collection", icon: "collection.png", path: "/Playlist" },
-    { name: "Subscribers", icon: "subscribers.png", path: "/" },
+    { name: "Subscribers", icon: "subscribers.png", path: "/Subscribers" },
   ];
 
   const bottomMenuItems = [

@@ -3,6 +3,7 @@ import Header from "./Header.jsx"
 import { EmptyHomePage, EmptyPlayListPage, EmptyLikePage, EmptyHistoryPage, EmptyFollowPage } from "./EmptysState/"
 import { VideoGrid, VideoCard, VideoDetails, CommentSection, VideoPlayer } from "./VideoCard/"
 import { FollowingList, Playlist, TweetsList, VideosList }from "./Profile/"
+import { SubscriberCard, SubscriberGrid } from "./Subscriber"
 
 export 
 { 
@@ -21,5 +22,7 @@ export
     EmptyPlayListPage,
     EmptyLikePage,
     EmptyHistoryPage,
-    EmptyFollowPage
+    EmptyFollowPage,
+    SubscriberCard,
+    SubscriberGrid
 }
