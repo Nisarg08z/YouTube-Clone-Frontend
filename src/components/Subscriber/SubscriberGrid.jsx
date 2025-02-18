@@ -1,7 +1,7 @@
 import React from "react";
 import SubscriberCard from "./SubscriberCard";
 
-const SubscriberGrid = ({ Subscribers, isProfile = 'false' }) => {
+const SubscriberGrid = ({ Subscribers, isProfile = false }) => {
   //console.log(Subscribers)
   return (
     <div className="">

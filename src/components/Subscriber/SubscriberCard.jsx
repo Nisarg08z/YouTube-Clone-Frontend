@@ -1,22 +1,21 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { Link } from "react-router-dom";
 import { toggleSubscription, isChannelFollowedBysubscriber } from "../../utils/api";
+import { UserContext } from "../../contexts/UserContext";
 
 const SubscriberCard = ({ Subscriber, isProfile }) => {
 
     const [isFollowed, setIsFollowed] = useState(null);
-    const [followCount, setFollowCount] = useState(null);
+    const [followCount, setFollowCount] = useState(0);
+    const { userDetail } = useContext(UserContext);
 
     //console.log(isProfile)
-    
-    const channelId = isProfile ? Subscriber?.channel : Subscriber.channel._id;
-    console.log(isProfile)
-    console.log("--1--",channelId)
-    console.log("--2--",Subscriber.channel._id)
 
+    const channelId = isProfile ? Subscriber?.subscriber?._id : Subscriber.channel._id;
     const avatar = isProfile ? Subscriber.subscriber.avatar : Subscriber.channel.avatar;
     const fullName = isProfile ? Subscriber.subscriber.fullName : Subscriber.channel.fullName;
     const username = isProfile ? Subscriber.subscriber.username : Subscriber?.channel?.username;
+    const subscribersCount = isProfile ? Subscriber.subscriber.subscribersCount : Subscriber.channel.subscribersCount
 
     useEffect(() => {
         const fetchFollowStatus = async () => {
@@ -24,25 +23,28 @@ const SubscriberCard = ({ Subscriber, isProfile }) => {
                 try {
                     const data = await isChannelFollowedBysubscriber(channelId);
                     setIsFollowed(data.statusCode);
-                    setFollowCount(isProfile ? Subscriber.subscriber.subscriptionsCount : Subscriber.channel.subscribersCount);
                 } catch (error) {
                     console.error("Error checking Follow status:", error);
                 }
             }
         };
         fetchFollowStatus();
-    }, [channelId, isProfile, Subscriber]);  // Include dependencies correctly
+    }, [channelId]);
+
+    useEffect(() => {
+        if (subscribersCount !== undefined) {
+            setFollowCount(subscribersCount);
+        }
+    }, [subscribersCount]);
 
     const handleFollowToggle = async () => {
         try {
             const response = await toggleSubscription(channelId);
-            if (response?.data?.success) {
+            if (!response?.data?.success) {
                 setIsFollowed((prev) => !prev);
                 setFollowCount((prev) => (prev !== null ? (isFollowed ? prev - 1 : prev + 1) : prev));
-            } else {
                 console.error("Failed to toggle Follow.");
             }
-            window.location.reload();
         } catch (error) {
             console.error("Error toggling Follow:", error);
         }
@@ -63,12 +65,12 @@ const SubscriberCard = ({ Subscriber, isProfile }) => {
                     <p className="text-gray-400 text-sm">{followCount} Followers</p>
                 </div>
             </div>
-            <button
+            {(channelId !== userDetail?._id) && (<button
                 onClick={handleFollowToggle}
                 className={`px-4 py-1 rounded-lg ${!isFollowed ? "bg-purple-600" : "bg-gray-800"}`}
             >
                 {isFollowed ? "Unfollow" : "Follow"}
-            </button>
+            </button>)}
         </div>
     );
 };

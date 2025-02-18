@@ -137,7 +137,7 @@ const Profile = () => {
                 {activeTab === "Videos" && <VideosList userId={user?._id} />}
                 {activeTab === "Playlist" && <Playlist userId={user?._id} />}
                 {activeTab === "Tweets" && <TweetsList userId={user?._id} />}
-                {activeTab === "Following" && <FollowingList userId={user?._id} isProfile='true'/>}
+                {activeTab === "Following" && <FollowingList userId={user?._id} isProfile = {true} />}
             </div>
         </div>
     );
