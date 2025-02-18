@@ -403,3 +403,48 @@ export const getuserchannelsubscribers = async (channelId) => {
     throw new Error(error.response?.data?.message || "Failed to fetch subscribers");
   }
 };
+
+export const addTweet = async (content) => {
+  try {
+    const response = await axios.post(
+      `${BASE_URL}tweet/`,
+      { content },
+      { withCredentials: true }
+    );
+    return response.data;
+  } catch (error) {
+    console.error("API Error:", error.response?.data || error);
+    throw error.response?.data || error;
+  }
+};
+
+export const fetchTweets = async (userId) => {
+  try {
+    const response = await axios.get(`${BASE_URL}tweet/user/${userId}`, {
+      withCredentials: true,
+    });
+    return response.data.message; 
+  } catch (error) {
+    console.error("API Error:", error.response?.data || error);
+    throw error.response?.data || error;
+  }
+};
+
+
+export const updateTweet = async (tweetId, content) => {
+  try {
+    const response = await axios.patch(`${BASE_URL}tweet/${tweetId}`, { content }, { withCredentials: true });
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || error;
+  }
+};
+
+export const deleteTweet = async (tweetId) => {
+  try {
+    const response = await axios.delete(`${BASE_URL}tweet/${tweetId}`, { withCredentials: true });
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || error;
+  }
+};
