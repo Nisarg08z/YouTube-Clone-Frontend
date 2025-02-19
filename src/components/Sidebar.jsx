@@ -6,7 +6,7 @@ const Sidebar = ({ hideSidebar }) => {
     { name: "Home", icon: "home.png", path: "/" },
     { name: "Liked Videos", icon: "liked.png", path: "/like/Videos" },
     { name: "History", icon: "history.png", path: "/WatchHistory" },
-    { name: "My Content", icon: "content.png", path: "/" },
+    { name: "My Content", icon: "content.png", path: "/Content" },
     { name: "Collection", icon: "collection.png", path: "/Playlist" },
     { name: "Subscribers", icon: "subscribers.png", path: "/Subscribers" },
   ];

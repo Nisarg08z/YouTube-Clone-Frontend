@@ -7,6 +7,7 @@ import LikeVideos from './LikeVideos/LikeVideos'
 import WatchHistory from './WatchHistory/WatchHistory'
 import PlayList from './PlayList/PlayList'
 import Subscribers from "./Subscribers/Subscribers"
+import Content from './Content/Content'
 
 export
 {
@@ -18,5 +19,6 @@ export
     LikeVideos,
     WatchHistory,
     PlayList,
-    Subscribers
+    Subscribers,
+    Content
 }

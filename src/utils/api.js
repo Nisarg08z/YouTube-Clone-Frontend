@@ -448,3 +448,66 @@ export const deleteTweet = async (tweetId) => {
     throw error.response?.data || error;
   }
 };
+
+export const statsContent = async (channelId) => {
+  try {
+    console.log(channelId)
+    const response = await axios.get(`${BASE_URL}dashboard/stats/${channelId}`, { withCredentials: true });
+    console.log(response)
+    return response.data.message;
+  } catch (error) {
+    console.error("Error fetching stats Content:", error);
+  }
+};
+
+export const videosContent = async (channelId) => {
+  try {
+    const response = await axios.get(`${BASE_URL}dashboard/videos/${channelId}`, { withCredentials: true });
+    return response.data.message;
+  } catch (error) {
+    console.error("Error fetching videos Content:", error);
+  }
+};
+
+export const togglePublishVideo = async (videoId) => {
+  try {
+    const response = await axios.get(`${BASE_URL}/toggle/publish/:videoId${videoId}`, { withCredentials: true });
+    return response;
+  } catch (error) {
+    console.error("Error fetching videos Content:", error);
+  }
+};
+
+export const deleteVideo = async (videoId) => {
+  try {
+    await axios.delete(`${BASE_URL}videos/${videoId}`, { withCredentials: true });
+    return response
+  } catch (error) {
+    console.error("Error deleting video:", error);
+  }
+};
+
+export const editVideo = async (videoId, formData) => {
+  try {
+    const response = await axios.put(`${BASE_URL}videos/${videoId}`, formData);  
+    return response.data;
+  } catch (error) {
+    console.error("Error updating video:", error);
+    throw error;
+  }
+};
+
+
+export const publishVideo = async (videoData) => {
+  try {
+    const response = await axios.post(
+      `${BASE_URL}videos`,
+      videoData,
+      { withCredentials: true, headers: { "Content-Type": "multipart/form-data" } }
+    );
+    return response.data;
+  } catch (error) {
+    console.error("publishVideo API Error:", error.response?.data || error);
+    throw error;
+  }
+};
