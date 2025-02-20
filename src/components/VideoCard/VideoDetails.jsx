@@ -4,6 +4,7 @@ import { getUserProfile, toggleVideoLike, isVideosLikeByUser, toggleSubscription
 import { Link, useNavigate } from "react-router-dom";
 import { CreatePlayListCard } from "../PlayList";
 import { UserContext } from "../../contexts/UserContext";
+import LoginPrompt from "../LoginPrompt";
 
 const VideoDetails = ({ video, userId }) => {
     const [showFull, setShowFull] = useState(false);
@@ -14,8 +15,9 @@ const VideoDetails = ({ video, userId }) => {
     const [showPlaylistModal, setShowPlaylistModal] = useState(false);
     const [isFollowed, setIsFollowed] = useState(null);
     const [followCount, setFollowCount] = useState(null);
-    const { userDetail } = useContext(UserContext);
+    const { userDetail, isLogedin } = useContext(UserContext);
     const navigate = useNavigate();
+    const [showLoginPrompt, setShowLoginPrompt] = useState(false);
 
     useEffect(() => {
         const fetchUser = async () => {
@@ -67,6 +69,10 @@ const VideoDetails = ({ video, userId }) => {
     };
 
     const handleLikeToggle = async () => {
+        if (!isLogedin) {
+            setShowLoginPrompt(true);
+            return;
+        }
         try {
             const response = await toggleVideoLike(video._id);
             if (response?.data?.success) {
@@ -81,7 +87,11 @@ const VideoDetails = ({ video, userId }) => {
     };
 
     const handleFollowToggle = async () => {
-        if (video?.uploader?._id === userDetail?._id) return; 
+        if (!isLogedin) {
+            setShowLoginPrompt(true);
+            return;
+        }
+        if (video?.uploader?._id === userDetail?._id) return;
         try {
             const response = await toggleSubscription(video.uploader._id);
             if (!response?.data?.success) {
@@ -92,6 +102,14 @@ const VideoDetails = ({ video, userId }) => {
         } catch (error) {
             console.error("Error toggling Follow:", error);
         }
+    };
+
+    const handleSave = () => {
+        if (!isLogedin) {
+            setShowLoginPrompt(true);
+            return;
+        }
+        setShowPlaylistModal(true);
     };
 
     return (
@@ -107,15 +125,17 @@ const VideoDetails = ({ video, userId }) => {
                 {video?.views} Views • {formatDistanceToNow(new Date(video?.createdAt))} ago
             </p>
 
-            <Link to={`/profile/${video?.uploader?.username}`}>
-                <div className="flex items-center mt-3">
-                    <img src={user?.data?.avatar || "https://via.placeholder.com/40"} alt="User" className="w-10 h-10 rounded-full" />
-                    <div className="ml-3">
+
+            <div className="flex items-center mt-3">
+                <img src={user?.data?.avatar || "https://via.placeholder.com/40"} alt="User" className="w-10 h-10 rounded-full" />
+                <div className="ml-3">
+                    <Link to={`/profile/${video?.uploader?.username}`}>
                         <p className="font-bold">{video?.uploader?.username || "Unknown"}</p>
-                        <p className="text-gray-400 text-sm">{followCount || 0} Followers</p>
-                    </div>
+                    </Link>
+                    <p className="text-gray-400 text-sm">{followCount || 0} Followers</p>
                 </div>
-            </Link>
+            </div>
+
 
             <div className="absolute top-4 right-4 flex flex-col items-end space-y-2">
                 <div className="flex space-x-2 pb-2">
@@ -124,7 +144,7 @@ const VideoDetails = ({ video, userId }) => {
                         <span className="ml-2">{likesCount}</span>
                     </button>
 
-                    <button onClick={() => setShowPlaylistModal(true)} className="bg-gray-800 px-4 py-2 rounded-lg text-white flex items-center">
+                    <button onClick={handleSave} className="bg-gray-800 px-4 py-2 rounded-lg text-white flex items-center">
                         <img src="/assets/icons/collection.png" alt="collection" className="h-6" />
                         <span className="ml-2">Save</span>
                     </button>
@@ -150,6 +170,8 @@ const VideoDetails = ({ video, userId }) => {
             {showPlaylistModal && (
                 <CreatePlayListCard videoId={video._id} userId={userId} onClose={() => setShowPlaylistModal(false)} />
             )}
+
+            {showLoginPrompt && <LoginPrompt onClose={() => setShowLoginPrompt(false)} />}
         </div>
     );
 };

@@ -1,7 +1,9 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import { addComment, fetchComments, updateComment, deleteComment } from "../../utils/api";
 import { Link } from "react-router-dom";
 import { formatDistanceToNow } from "date-fns";
+import { UserContext } from "../../contexts/UserContext";
+import LoginPrompt from "../LoginPrompt";
 
 const CommentSection = ({ videoId, currentUser, videoOwner }) => {
   const [comments, setComments] = useState([]);
@@ -12,6 +14,8 @@ const CommentSection = ({ videoId, currentUser, videoOwner }) => {
   const limit = 10;
   const [loading, setLoading] = useState(false);
   const [menuOpen, setMenuOpen] = useState(null);
+  const { isLogedin } = useContext(UserContext);
+  const [showLoginPrompt, setShowLoginPrompt] = useState(false);
 
   useEffect(() => {
     const loadComments = async () => {
@@ -47,10 +51,16 @@ const CommentSection = ({ videoId, currentUser, videoOwner }) => {
   };
 
   const formatCreatedAt = (createdAt) => {
-      return createdAt ? formatDistanceToNow(new Date(createdAt)) + " ago" : "N/A";
+    return createdAt ? formatDistanceToNow(new Date(createdAt)) + " ago" : "N/A";
   };
 
   const handleAddOrUpdateComment = async () => {
+
+    if (!isLogedin) {
+      setShowLoginPrompt(true);
+      return;
+    }
+
     if (!newComment.trim()) return;
 
     if (editingCommentId) {
@@ -201,6 +211,8 @@ const CommentSection = ({ videoId, currentUser, videoOwner }) => {
           {loading ? "Loading..." : "Show More"}
         </button>
       )}
+
+      {showLoginPrompt && <LoginPrompt onClose={() => setShowLoginPrompt(false)} />}
     </div>
   );
 };

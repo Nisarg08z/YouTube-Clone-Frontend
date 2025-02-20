@@ -1,7 +1,11 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useContext } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { UserContext } from "../contexts/UserContext";
 
 const Sidebar = ({ hideSidebar }) => {
+  const { isLogedin } = useContext(UserContext);
+  const navigate = useNavigate();
+
   const menuItems = [
     { name: "Home", icon: "home.png", path: "/" },
     { name: "Liked Videos", icon: "liked.png", path: "/like/Videos" },
@@ -15,6 +19,14 @@ const Sidebar = ({ hideSidebar }) => {
     { name: "Support", icon: "support.png", path: "/" },
     { name: "Settings", icon: "settings.png", path: "/" },
   ];
+
+  const handleNavigation = (path) => {
+    if (!isLogedin) {
+      navigate("/login");  // Redirect to login if not logged in
+    } else {
+      navigate(path);  // Navigate to the desired path if logged in
+    }
+  };
 
   return (
     <aside
@@ -30,9 +42,9 @@ const Sidebar = ({ hideSidebar }) => {
         </div>
         <nav>
           {menuItems.map((item) => (
-            <Link
+            <button
               key={item.name}
-              to={item.path}
+              onClick={() => handleNavigation(item.path)}
               className={`w-full flex items-center text-gray-300 hover:text-white py-2 px-3 rounded hover:bg-gray-800 ${
                 hideSidebar ? "justify-center" : ""
               }`}
@@ -43,16 +55,16 @@ const Sidebar = ({ hideSidebar }) => {
                 className="h-6"
               />
               {!hideSidebar && <span className="ml-3">{item.name}</span>}
-            </Link>
+            </button>
           ))}
         </nav>
       </div>
 
       <div>
         {bottomMenuItems.map((item) => (
-          <Link
+          <button
             key={item.name}
-            to={item.path}
+            onClick={() => handleNavigation(item.path)}
             className={`w-full flex items-center text-gray-300 hover:text-white py-2 px-3 rounded hover:bg-gray-800 ${
               hideSidebar ? "justify-center" : ""
             }`}
@@ -63,7 +75,7 @@ const Sidebar = ({ hideSidebar }) => {
               className="h-6"
             />
             {!hideSidebar && <span className="ml-3">{item.name}</span>}
-          </Link>
+          </button>
         ))}
       </div>
     </aside>

@@ -75,7 +75,7 @@ const TweetsList = ({ userId }) => {
   return (
     <div className="bg-black w-full text-white p-4 rounded-lg border border-gray-700">
       <h2>{tweets.length} Tweets</h2>
-      {userId === userDetail._id && (
+      {userId === userDetail?._id && (
         <div>
           <input
             type="text"

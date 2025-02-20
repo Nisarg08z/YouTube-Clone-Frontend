@@ -3,21 +3,14 @@ import { getUserPlaylists } from '../../utils/api';
 import { UserContext } from '../../contexts/UserContext';
 import { PlayListGrid } from '../../components/PlayList';
 import { EmptyPlayListPage } from '../../components/EmptysState';
-import { useNavigate } from 'react-router-dom';
 
 const PlayList = ({ userid }) => {
-    const { isLogedin, userDetail } = useContext(UserContext);
+    const { userDetail } = useContext(UserContext);
     const [playlists, setPlaylists] = useState([]);
     const [loading, setLoading] = useState(true);
-    const navigate = useNavigate();
+
 
     useEffect(() => {
-        if (!isLogedin) {
-            navigate('/login'); 
-            return;
-        }
-
-        if (!userDetail) return;
 
         const user = userid || userDetail._id;
 
@@ -38,7 +31,7 @@ const PlayList = ({ userid }) => {
         };
 
         fetchPlayList();
-    }, [isLogedin, userDetail, userid, navigate]);
+    }, [ userDetail, userid]);
 
     if (loading) {
         return <div className="text-center">Loading...</div>;
