@@ -46,7 +46,7 @@ const VideoUpload = ({ userDetail }) => {
             <div className="flex justify-between items-center">
                 <div>
                     <h1 className="text-2xl font-semibold">Welcome back, {userDetail?.fullName}</h1>
-                    <p className="text-gray-400">Track, manage and forecast your customers and orders.</p>
+                    <p className="text-gray-400">Track, manage and forecast your Videos.</p>
                 </div>
                 <button
                     onClick={() => setIsOpen(true)}

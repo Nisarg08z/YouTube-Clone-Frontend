@@ -7,7 +7,7 @@ const VideoTable = ({ video }) => {
   const [isPublished, setIsPublished] = useState(video.isPublished);
   const [isEditing, setIsEditing] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
-  const [isDeleting, setIsDeleting] = useState(false); // Track delete confirmation state
+  const [isDeleting, setIsDeleting] = useState(false); 
   const [editedVideo, setEditedVideo] = useState({
     title: video.title,
     description: video.description,
@@ -16,12 +16,13 @@ const VideoTable = ({ video }) => {
 
   const handleTogglePublish = async () => {
     try {
-      await togglePublishVideo(video._id);
-      setIsPublished(!isPublished);
+      const updatedStatus = await togglePublishVideo(video._id); 
+      setIsPublished(updatedStatus);
     } catch (error) {
       console.error("Error toggling publish status:", error);
     }
   };
+  
 
   const handleEditChange = (e) => {
     setEditedVideo({ ...editedVideo, [e.target.name]: e.target.value });
@@ -36,19 +37,19 @@ const VideoTable = ({ video }) => {
       alert("Title and description are required.");
       return;
     }
-  
+
     setIsUploading(true);
-  
+
     try {
       const formData = new FormData();
       formData.append("title", editedVideo.title);
       formData.append("description", editedVideo.description);
-  
+
       // Only append thumbnail if it's selected
       if (editedVideo.thumbnail) {
         formData.append("thumbnail", editedVideo.thumbnail);
       }
-  
+
       await editVideo(video._id, formData);
       setIsEditing(false);
     } catch (error) {
@@ -57,7 +58,7 @@ const VideoTable = ({ video }) => {
       setIsUploading(false);
     }
   };
-  
+
 
   const handleDeleteClick = () => {
     setIsDeleting(true); // Show the delete confirmation modal
@@ -84,17 +85,17 @@ const VideoTable = ({ video }) => {
         <td className="py-3 px-6">
           <ToggleSwitch isOn={isPublished} onToggle={handleTogglePublish} />
         </td>
-  
+
         <td className="py-3 px-6">
           <span className="ml-2">{isPublished ? "Published" : "Not Published"}</span>
         </td>
-  
+
         <td className="py-3 px-6 break-words w-1/3">{video.description}</td>
-  
+
         <td className="py-3 px-6">{video.likesCount}</td>
-  
+
         <td className="py-3 px-6">{new Date(video.createdAt).toLocaleDateString()}</td>
-  
+
         <td className="py-3 px-6 flex space-x-2 items-center">
           <button
             onClick={() => setIsEditing(true)}
@@ -110,7 +111,7 @@ const VideoTable = ({ video }) => {
           </button>
         </td>
       </tr>
-  
+
       {/* Render the edit modal outside of <tbody> */}
       {isEditing && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
@@ -125,7 +126,7 @@ const VideoTable = ({ video }) => {
               className="bg-gray-700 text-white px-2 py-1 rounded w-full mb-3"
               disabled={isUploading}
             />
-  
+
             <label className="block mb-2">Description</label>
             <textarea
               name="description"
@@ -134,14 +135,14 @@ const VideoTable = ({ video }) => {
               className="bg-gray-700 text-white px-2 py-1 rounded w-full mb-3"
               disabled={isUploading}
             />
-  
+
             <label className="block mb-2">Thumbnail</label>
             <FileUpload
               onFileSelect={handleFileChange}
               acceptedFileTypes="image/*"
               disabled={isUploading}
             />
-  
+
             <div className="flex justify-end mt-4 space-x-2">
               <button
                 onClick={handleEditSubmit}
@@ -170,14 +171,14 @@ const VideoTable = ({ video }) => {
           </div>
         </div>
       )}
-  
+
       {/* Delete Confirmation Modal */}
       {isDeleting && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
           <div className="bg-gray-800 p-6 rounded-lg w-96 text-white">
             <h3 className="text-lg font-semibold mb-4">Delete Video</h3>
             <p>Are you sure you want to delete this video? Once it's deleted, you won't be able to recover it.</p>
-  
+
             <div className="flex justify-end mt-4 space-x-2">
               <button
                 onClick={handleDeleteCancel}
@@ -197,6 +198,6 @@ const VideoTable = ({ video }) => {
       )}
     </>
   );
-} 
+}
 
 export default VideoTable;

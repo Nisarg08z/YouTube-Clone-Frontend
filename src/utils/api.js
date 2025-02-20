@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const BASE_URL = 'http://localhost:8000/api/v1/';
+const BASE_URL = 'http://localhost:8001/api/v1/';
 
 // Login API
 export const loginUser = async (formData) => {
@@ -46,7 +46,8 @@ export const getVideos = async () => {
       withCredentials: true,
     });
     //console.log(response.data.message.docs)
-    return response.data.message.docs;
+    const publishedVideos = response.data.message.docs.filter(video => video.isPublished)
+    return publishedVideos;
   } catch (error) {
     console.error('API Error:', error.response?.data?.message || error.message);
     throw error.response?.data || error;
@@ -146,7 +147,8 @@ export const getUserAllVideos = async (userId) => {
   try {
     const response = await axios.get(`${BASE_URL}videos?userId=${userId}`, { withCredentials: true });
     //console.log("-------------------", response)
-    return response.data.message.docs;
+    const publishedVideos = response.data.message.docs.filter(video => video.isPublished)
+    return publishedVideos;
   } catch (error) {
     console.error('API Error:', error.response?.data?.message || error.message);
     throw error.response?.data || error;
@@ -246,15 +248,17 @@ export const getLikeVideos = async () => {
       withCredentials: true,
     });
 
-    const likedVideos = response.data.message.map((item) => ({
-      ...item,
-      uploader: {
-        username: item.uploader?.username,
-        fullName: item.uploader?.fullName,
-        avatar: item.uploader?.avatar,
-      },
-      likedAt: item.likedAt,
-    }));
+    const likedVideos = response.data.message
+      .filter((item) => item.isPublished) 
+      .map((item) => ({
+        ...item,
+        uploader: {
+          username: item.uploader?.username,
+          fullName: item.uploader?.fullName,
+          avatar: item.uploader?.avatar,
+        },
+        likedAt: item.likedAt,
+      }));
 
     return likedVideos;
   } catch (error) {
@@ -262,6 +266,7 @@ export const getLikeVideos = async () => {
     throw error.response?.data || error;
   }
 };
+
 
 export const addToWatchHistory = async (videoId) => {
   try {
@@ -280,7 +285,8 @@ export const getWatchedVideos = async () => {
       withCredentials: true,
     });
     //console.log(response.data)
-    return response.data.message;
+    const publishedVideos = response.data.message.filter(video => video.isPublished)
+    return publishedVideos
   } catch (error) {
     console.error('API Error:', error.response?.data?.message || error.message);
     throw error.response?.data || error;
@@ -471,12 +477,19 @@ export const videosContent = async (channelId) => {
 
 export const togglePublishVideo = async (videoId) => {
   try {
-    const response = await axios.get(`${BASE_URL}/toggle/publish/:videoId${videoId}`, { withCredentials: true });
-    return response;
+    const response = await axios.patch(
+      `${BASE_URL}videos/toggle/publish/${videoId}`,
+      {}, 
+      { withCredentials: true } 
+    );
+    console.log("Response:", response);
+    return response.data.message.isPublished;
   } catch (error) {
-    console.error("Error fetching videos Content:", error);
+    console.error("Error toggling publish status:", error.response?.data || error);
+    throw error; 
   }
 };
+
 
 export const deleteVideo = async (videoId) => {
   try {
@@ -509,5 +522,26 @@ export const publishVideo = async (videoData) => {
   } catch (error) {
     console.error("publishVideo API Error:", error.response?.data || error);
     throw error;
+  }
+};
+
+// API call to remove video from playlist
+export const removeVideoFromPlaylist = async (videoId, playlistId) => {
+  try {
+    await axios.delete(`${BASE_URL}playlist/remove/${videoId}/${playlistId}`, {
+      withCredentials: true,
+    });
+  } catch (error) {
+    console.error("Error removing video:", error.response?.data?.message || error.message);
+  }
+};
+
+// API call to check if a video exists
+export const checkVideoExists = async (videoId) => {
+  try {
+    await axios.get(`${BASE_URL}videos/${videoId}`);
+    return true;
+  } catch (error) {
+    return false;
   }
 };

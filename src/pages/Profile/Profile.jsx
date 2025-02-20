@@ -49,7 +49,7 @@ const Profile = () => {
     }, [user?.subscribersCount]);
 
     const handleProfile = () => {
-        navigate(`/profile/${userDetail?.username}`);
+        navigate(`/Content`);
     };
 
     const handleFollowToggle = async () => {

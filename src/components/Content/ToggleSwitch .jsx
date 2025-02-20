@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 
 const ToggleSwitch = ({ isOn, onToggle }) => {
   return (
@@ -12,10 +12,10 @@ const ToggleSwitch = ({ isOn, onToggle }) => {
       <div
         className={`w-12 h-6 rounded-full transition duration-300 ${
           isOn ? "bg-purple-500" : "bg-gray-300"
-        } peer-checked:bg-purple-500`}
+        }`}
       ></div>
       <div
-        className={`absolute left-1 top-1 w-4 h-4 bg-black rounded-full transition-transform ${
+        className={`absolute left-1 top-1 w-4 h-4 bg-white rounded-full transition-transform transform ${
           isOn ? "translate-x-6" : "translate-x-0"
         }`}
       ></div>
@@ -23,5 +23,4 @@ const ToggleSwitch = ({ isOn, onToggle }) => {
   );
 };
 
-export default ToggleSwitch
-
+export default ToggleSwitch;

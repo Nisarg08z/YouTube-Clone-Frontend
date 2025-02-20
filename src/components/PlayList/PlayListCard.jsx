@@ -1,6 +1,7 @@
-import React, { useState, useRef, useEffect } from "react";
-import { editPlayList, deletePlayList } from "../../utils/api";
+import React, { useState, useRef, useEffect, useContext } from "react";
+import { editPlayList, deletePlayList, checkVideoExists, removeVideoFromPlaylist } from "../../utils/api";
 import { Link } from "react-router-dom";
+import { UserContext } from "../../contexts/UserContext";
 
 function PlayListCard({ playlist }) {
   const [menuOpen, setMenuOpen] = useState(null);
@@ -8,29 +9,50 @@ function PlayListCard({ playlist }) {
   const [isEditing, setIsEditing] = useState(false);
   const [name, setName] = useState(playlist?.name || "");
   const [description, setDescription] = useState(playlist?.description || "");
+  const { userDetail } = useContext(UserContext);
+  const [filteredVideos, setFilteredVideos] = useState(playlist?.videos || []);
 
   const menuButtonRef = useRef(null);
   const menuRef = useRef(null);
 
   if (!playlist) return null;
 
-  // Toggle the visibility of the menu
+  // Fetch latest playlist videos and remove unavailable ones
+  useEffect(() => {
+    const updatePlaylistVideos = async () => {
+      const validVideos = await Promise.all(
+        playlist.videos.map(async (video) => {
+          if (!video.isPublished) return null;
+
+          const exists = await checkVideoExists(video._id);
+          if (!exists) {
+            await removeVideoFromPlaylist(video._id, playlist._id);
+            return null;
+          }
+
+          return video;
+        })
+      );
+
+      setFilteredVideos(validVideos.filter(Boolean)); // Remove null values
+    };
+
+    updatePlaylistVideos();
+  }, [playlist.videos]);
+
   const handleMenuToggle = () => {
     setMenuOpen(menuOpen ? null : playlist.id);
   };
 
-  // Open the edit modal
   const handleEditPlaylist = () => {
     setIsEditing(true);
     setMenuOpen(null);
   };
 
-  // Handle saving the playlist edit
   const handleSavePlaylist = async () => {
     setLoading(true);
     try {
-      const updatedData = { name, description };
-      await editPlayList(playlist._id, updatedData);
+      await editPlayList(playlist._id, { name, description });
       setIsEditing(false);
       window.location.reload();
     } catch (error) {
@@ -40,12 +62,11 @@ function PlayListCard({ playlist }) {
     }
   };
 
-  // Handle deleting the playlist instantly
   const handleDeletePlaylist = async () => {
     setLoading(true);
     try {
-      await deletePlayList(playlist._id); // Delete the playlist from the API
-      setMenuOpen(null); // Close the menu after deletion
+      await deletePlayList(playlist._id);
+      setMenuOpen(null);
       window.location.reload();
     } catch (error) {
       console.error(error);
@@ -54,31 +75,10 @@ function PlayListCard({ playlist }) {
     }
   };
 
-  // Close the menu if clicked outside
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (
-        menuRef.current &&
-        !menuRef.current.contains(event.target) &&
-        !menuButtonRef.current.contains(event.target)
-      ) {
-        setMenuOpen(null);
-      }
-    };
-
-    document.addEventListener("click", handleClickOutside);
-
-    return () => {
-      document.removeEventListener("click", handleClickOutside);
-    };
-  }, []);
-
   return (
     <>
-
       <div className="bg-gray-800 rounded-lg overflow-hidden shadow-lg w-full max-w-[18rem] flex flex-col">
         <Link to={`/playlist/${playlist._id}`} className="block">
-          {/* Playlist Image and Video Count */}
           <div className="relative aspect-video">
             <img
               src="https://res.cloudinary.com/dby0edrrn/image/upload/v1739551543/DALL_E_2025-02-14_22.11.14_-_A_simple_widescreen_video_thumbnail_representing_multiple_videos._The_design_features_a_large_play_button_in_the_center_with_a_minimalistic_dark_backg_yrnplv.webp"
@@ -86,22 +86,23 @@ function PlayListCard({ playlist }) {
               className="w-full h-full object-cover"
             />
             <span className="absolute bottom-2 right-2 bg-black bg-opacity-75 text-white text-xs px-1.5 py-0.5 rounded">
-              {playlist?.videos?.length || 0} Videos
+              {filteredVideos.length} Videos
             </span>
           </div>
         </Link>
-        {/* Playlist Name and Menu Button */}
+
         <div className="p-3 flex justify-between items-center">
           <p className="text-white text-lg font-semibold">{playlist.name}</p>
-          <button
-            ref={menuButtonRef}
-            className="text-white px-2 py-1 rounded hover:bg-gray-700 transition"
-            onClick={handleMenuToggle}
-          >
-            ⋮
-          </button>
+          {userDetail._id === playlist.owner && (
+            <button
+              ref={menuButtonRef}
+              className="text-white px-2 py-1 rounded hover:bg-gray-700 transition"
+              onClick={handleMenuToggle}
+            >
+              ⋮
+            </button>
+          )}
 
-          {/* Dropdown Menu */}
           {menuOpen === playlist.id && (
             <div
               ref={menuRef}
@@ -130,13 +131,10 @@ function PlayListCard({ playlist }) {
         </div>
       </div>
 
-      {/* Edit Playlist Modal */}
       {isEditing && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
           <div className="bg-gray-900 p-5 rounded-lg w-96">
             <h2 className="text-white text-xl font-semibold mb-4">Edit Playlist</h2>
-
-            {/* Image Preview */}
             <div className="mb-4">
               <img
                 src="https://res.cloudinary.com/dby0edrrn/image/upload/v1739551543/DALL_E_2025-02-14_22.11.14_-_A_simple_widescreen_video_thumbnail_representing_multiple_videos._The_design_features_a_large_play_button_in_the_center_with_a_minimalistic_dark_backg_yrnplv.webp"
@@ -145,7 +143,6 @@ function PlayListCard({ playlist }) {
               />
             </div>
 
-            {/* Playlist Name */}
             <label className="text-gray-400 text-sm">Title</label>
             <input
               type="text"
@@ -154,7 +151,6 @@ function PlayListCard({ playlist }) {
               className="w-full p-2 bg-gray-800 text-white rounded mb-3"
             />
 
-            {/* Playlist Description */}
             <label className="text-gray-400 text-sm">Description</label>
             <textarea
               value={description}
@@ -163,7 +159,6 @@ function PlayListCard({ playlist }) {
               rows="3"
             />
 
-            {/* Buttons */}
             <div className="flex justify-end space-x-2">
               <button
                 onClick={() => setIsEditing(false)}
