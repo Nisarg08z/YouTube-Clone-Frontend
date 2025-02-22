@@ -33,6 +33,7 @@ const VideoUpload = ({ userDetail }) => {
             setVideoFile(null);
             setTitle("");
             setDescription("");
+            window.location.reload();
         } catch (error) {
             console.error("Upload failed:", error);
             alert("Failed to upload video");

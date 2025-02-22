@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { togglePublishVideo, deleteVideo, editVideo } from "../../utils/api";
-import ToggleSwitch from "./ToggleSwitch ";
+import ToggleSwitch from "./ToggleSwitch";
 import FileUpload from "./FileUpload";
 
 const VideoTable = ({ video }) => {
@@ -29,39 +29,50 @@ const VideoTable = ({ video }) => {
   };
 
   const handleFileChange = (file) => {
-    setEditedVideo({ ...editedVideo, thumbnail: file });
+    if (file instanceof File) {
+      setEditedVideo({ ...editedVideo, thumbnail: file });
+    }
   };
+  
 
   const handleEditSubmit = async () => {
     if (!editedVideo.title || !editedVideo.description) {
-      alert("Title and description are required.");
-      return;
+        alert("Title and description are required.");
+        return;
     }
 
     setIsUploading(true);
 
     try {
-      const formData = new FormData();
-      formData.append("title", editedVideo.title);
-      formData.append("description", editedVideo.description);
+        const formData = new FormData();
+        formData.append("title", editedVideo.title);
+        formData.append("description", editedVideo.description);
 
-      // Only append thumbnail if it's selected
-      if (editedVideo.thumbnail) {
-        formData.append("thumbnail", editedVideo.thumbnail);
-      }
+        if (editedVideo.thumbnail instanceof File) {
+            formData.append("thumbnail", editedVideo.thumbnail);
+            console.log("📤 Sending file:", editedVideo.thumbnail);
+        } else {
+            console.log("⚠ No new file selected");
+        }
 
-      await editVideo(video._id, formData);
-      setIsEditing(false);
+        const response = await editVideo(video._id, formData);
+
+        console.log("✅ Update successful:", response);
+        setIsEditing(false);
+        window.location.reload();
     } catch (error) {
-      console.error("Error updating video:", error);
+        console.error("❌ Error updating video:", error);
     } finally {
-      setIsUploading(false);
+        setIsUploading(false);
     }
-  };
+};
+
+
+  
 
 
   const handleDeleteClick = () => {
-    setIsDeleting(true); // Show the delete confirmation modal
+    setIsDeleting(true); 
   };
 
   const handleDeleteConfirm = async () => {
@@ -71,12 +82,12 @@ const VideoTable = ({ video }) => {
     } catch (error) {
       console.error("Error deleting video:", error);
     } finally {
-      setIsDeleting(false); // Close the confirmation modal
+      setIsDeleting(false); 
     }
   };
 
   const handleDeleteCancel = () => {
-    setIsDeleting(false); // Close the confirmation modal without deleting
+    setIsDeleting(false); 
   };
 
   return (

@@ -1,18 +1,24 @@
 import { useCallback, useState } from "react";
 import { useDropzone } from "react-dropzone";
 
-const FileUpload = ({ onFileSelect, acceptedFileTypes }) => {
+const FileUpload = ({ onFileSelect, acceptedFileTypes = {} }) => {
   const [filePreview, setFilePreview] = useState(null);
   const [isUploaded, setIsUploaded] = useState(false);
 
-  const onDrop = useCallback((acceptedFiles) => {
-    const file = acceptedFiles[0];
-    setFilePreview(URL.createObjectURL(file)); // Generate preview
-    setIsUploaded(true); // Hide the upload box
-    if (onFileSelect) {
-      onFileSelect(file);
-    }
-  }, [onFileSelect]);
+  const onDrop = useCallback(
+    (acceptedFiles) => {
+      const file = acceptedFiles[0];
+      if (!file) return;
+      
+      setFilePreview(URL.createObjectURL(file)); // Generate preview
+      setIsUploaded(true); // Hide upload box
+
+      if (onFileSelect) {
+        onFileSelect(file);
+      }
+    },
+    [onFileSelect]
+  );
 
   const removeFile = () => {
     setFilePreview(null);
@@ -21,7 +27,10 @@ const FileUpload = ({ onFileSelect, acceptedFileTypes }) => {
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
-    accept: acceptedFileTypes,
+    accept: {
+      "image/*": [".jpg", ".jpeg", ".png", ".gif", ".webp", ".svg"],
+      "video/*": [".mp4", ".mov", ".avi", ".mkv"],
+    },
     multiple: false,
   });
 
@@ -46,16 +55,16 @@ const FileUpload = ({ onFileSelect, acceptedFileTypes }) => {
               </p>
             )}
             <p className="text-xs">
-              {acceptedFileTypes.includes("image/*")
-                ? "SVG, PNG, JPG, GIF"
-                : "MP4, MOV"}{" "}
+              {Object.keys(acceptedFileTypes).includes("image/*")
+                ? "SVG, PNG, JPG, GIF, WEBP"
+                : "MP4, MOV, AVI, MKV"}{" "}
               (max. 800x400px)
             </p>
           </div>
         </div>
       ) : (
         <div className="mt-4 flex flex-col items-center">
-          {acceptedFileTypes.includes("video/*") ? (
+          {Object.keys(acceptedFileTypes).includes("video/*") ? (
             <video className="max-w-full max-h-40 rounded-lg" controls>
               <source src={filePreview} type="video/mp4" />
             </video>

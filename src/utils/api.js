@@ -502,7 +502,10 @@ export const deleteVideo = async (videoId) => {
 
 export const editVideo = async (videoId, formData) => {
   try {
-    const response = await axios.put(`${BASE_URL}videos/${videoId}`, formData);  
+    const response = await axios.patch(`${BASE_URL}videos/${videoId}`, formData, {
+      withCredentials: true,
+      headers: { "Content-Type": "multipart/form-data" },
+    });
     return response.data;
   } catch (error) {
     console.error("Error updating video:", error);
