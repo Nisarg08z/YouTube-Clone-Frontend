@@ -8,6 +8,7 @@ import WatchHistory from './WatchHistory/WatchHistory'
 import PlayList from './PlayList/PlayList'
 import Subscribers from "./Subscribers/Subscribers"
 import Content from './Content/Content'
+import SettingPage from './SettingPage/SettingPage'
 
 export
 {
@@ -20,5 +21,6 @@ export
     WatchHistory,
     PlayList,
     Subscribers,
-    Content
+    Content,
+    SettingPage
 }

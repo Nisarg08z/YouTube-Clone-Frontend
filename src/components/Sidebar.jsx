@@ -17,7 +17,7 @@ const Sidebar = ({ hideSidebar }) => {
 
   const bottomMenuItems = [
     { name: "Support", icon: "support.png", path: "/" },
-    { name: "Settings", icon: "settings.png", path: "/" },
+    { name: "Settings", icon: "settings.png", path: "/Setting" },
   ];
 
   const handleNavigation = (path) => {

@@ -548,3 +548,40 @@ export const checkVideoExists = async (videoId) => {
     return false;
   }
 };
+
+export const updateAvatar = async (formData) => {
+  try {
+    const response = await axios.patch(`${BASE_URL}users/avatar`, formData, {
+      withCredentials: true,
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error updating avatar:", error);
+    throw error;
+  }
+};
+
+export const updateCoverImage = async (formData) => {
+  try {
+    const response = await axios.patch(`${BASE_URL}users/cover-image`, formData, {
+      withCredentials: true,
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error updating cover-image:", error);
+    throw error;
+  }
+};
+
+export const updateAccountDetails = async (formData) => {
+  try {
+    const response = await axios.patch(`${BASE_URL}users/update-account`, formData, {
+      withCredentials: true,
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error updating account details:", error);
+    throw error;
+  }
+};
+

@@ -5,6 +5,7 @@ import { VideoGrid, VideoCard, VideoDetails, CommentSection, VideoPlayer } from 
 import { FollowingList, Playlist, TweetsList, VideosList }from "./Profile/"
 import { SubscriberCard, SubscriberGrid } from "./Subscriber"
 import { StatCard, VideoTable, VideoTableGrid, VideoUpload } from "./Content"
+import { UpdateDetail, UpdatePassword } from "./SettingCard"
 
 export 
 { 
@@ -29,5 +30,7 @@ export
     StatCard,
     VideoTable,
     VideoTableGrid,
-    VideoUpload
+    VideoUpload,
+    UpdateDetail,
+    UpdatePassword
 }

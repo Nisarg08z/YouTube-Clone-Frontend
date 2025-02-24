@@ -78,7 +78,7 @@ const Header = () => {
               <img
                 src={userDetail.avatar}
                 alt="User Avatar"
-                className="w-full h-full object-cover"
+                className="w-full rounded-full h-full object-cover"
               />
             </button>
 

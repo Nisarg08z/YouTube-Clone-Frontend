@@ -7,7 +7,7 @@ function Layout() {
   const location = useLocation();
 
   useEffect(() => {
-    if (location.pathname.startsWith("/video/") || location.pathname.startsWith("/Content")) {
+    if (location.pathname.startsWith("/video/") || location.pathname.startsWith("/Content") || location.pathname.startsWith("/Setting")) {
       setHideSidebar(true);
     } else {
       setHideSidebar(false);
