@@ -585,3 +585,15 @@ export const updateAccountDetails = async (formData) => {
   }
 };
 
+export const changePassword = async (formData) => {
+  try {
+    const response = await axios.post(`${BASE_URL}users/change-password`, formData, {
+      withCredentials: true,
+    });
+    return response.data;
+  } catch(error) {
+    console.error("Error changing password:", error);
+    throw error;
+  }
+}
+
