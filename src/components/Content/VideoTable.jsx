@@ -101,7 +101,7 @@ const VideoTable = ({ video }) => {
           <span className="ml-2">{isPublished ? "Published" : "Not Published"}</span>
         </td>
 
-        <td className="py-3 px-6 break-words w-1/3">{video.description}</td>
+        <td className="py-3 px-6 break-words w-1/3">{video.title}</td>
 
         <td className="py-3 px-6">{video.likesCount}</td>
 

@@ -114,11 +114,14 @@ const VideoDetails = ({ video, userId }) => {
 
     return (
         <div className="bg-black w-full text-white p-4 rounded-lg border border-gray-700 relative transition-all duration-300">
-            <p className="text-lg font-bold break-words h-auto w-[75%]">
+            <span className="text-gray-200 font-bold text-lg break-words">
+                {video?.title}
+            </span>
+            <p className="break-words h-auto w-[75%]">
                 {video?.description?.slice(0, maxLength) || "No Description"}
                 {video?.description?.length > maxLength && !showFull && " ..."}
                 {showFull && video?.description?.length > maxLength && (
-                    <span className="text-gray-300">{video?.description?.slice(maxLength)}</span>
+                    <span className="text-gray-400">{video?.description?.slice(maxLength)}</span>
                 )}
             </p>
             <p className="text-gray-400 text-sm">

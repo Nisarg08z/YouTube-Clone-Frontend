@@ -1,16 +1,25 @@
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { incrementVideoView } from "../../utils/api";
-
-import { useEffect, useRef } from "react";
 
 function VideoPlayer({ video }) {
     const videoRef = useRef(null);
+    const [viewCounted, setViewCounted] = useState(false);
 
     useEffect(() => {
         if (videoRef.current) {
             videoRef.current.load();
+            videoRef.current.play().catch((error) => {
+                console.error("Autoplay failed:", error);
+            });
         }
     }, [video]);
+
+    const handlePlay = () => {
+        if (!viewCounted) {
+            incrementVideoView(video._id);
+            setViewCounted(true);
+        }
+    };
 
     if (!video) return null;
 
@@ -19,7 +28,8 @@ function VideoPlayer({ video }) {
             <video
                 ref={videoRef}
                 controls
-                onPlay={() => incrementVideoView(video._id)}
+                autoPlay
+                onPlay={handlePlay}
                 className="w-full rounded-lg shadow-lg"
             >
                 <source src={video.videoFile} type="video/mp4" />
@@ -27,6 +37,5 @@ function VideoPlayer({ video }) {
         </div>
     );
 }
-
 
 export default VideoPlayer;

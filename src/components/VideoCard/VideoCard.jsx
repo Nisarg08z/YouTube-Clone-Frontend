@@ -34,7 +34,7 @@ const VideoCard = ({ video, hideUploader = false, isHorizontal = false }) => {
 
           <div className="flex-1">
             <h3 className="text-white font-medium text-sm truncate">
-              {truncateDescription(video.description)}
+              {truncateDescription(video.title)}
             </h3>
 
             {!hideUploader && (
@@ -73,8 +73,8 @@ const formatCreatedAt = (createdAt) => {
   return formatDistanceToNow(new Date(createdAt)) + " ago";
 };
 
-const truncateDescription = (description = "") => {
-  return description.length > 27 ? description.slice(0, 27) + "..." : description;
+const truncateDescription = (title = "") => {
+  return title.length > 27 ? title.slice(0, 27) + "..." : title;
 };
 
 
