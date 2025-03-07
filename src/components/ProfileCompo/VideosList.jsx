@@ -1,5 +1,5 @@
 import React , {useEffect} from "react"
-import { VideoGrid, EmptyHomePage } from '../';
+import { VideoGrid, EmptyHomePage } from '..';
 import { useVideoContext } from '../../contexts/VideoContext';
 
 const VideosList = ({userId}) => {

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import { SubscriberGrid } from "../";
+import { SubscriberGrid } from "..";
 import { getuserchannelsubscribers } from "../../utils/api";
-import { EmptyFollowPage } from "../";
+import { EmptyFollowPage } from "..";
 
 const FollowingList = ({ userId, isProfile }) => {
   const [subscribers, setSubscribers] = useState([]);
