@@ -5,7 +5,7 @@ import { UserContext } from "../../contexts/UserContext";
 import { removeVideoFromPlaylist } from "../../utils/api"
 
 const VideoCard = ({ video, hideUploader = false, isHorizontal = false, playList = null }) => {
-  const { userDetail } = useContext(UserContext);
+  const { userDetail, isLogedin } = useContext(UserContext);
   const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
@@ -81,7 +81,7 @@ const VideoCard = ({ video, hideUploader = false, isHorizontal = false, playList
           </div>
         </div>
 
-        {playList?.owner?.username === userDetail?.username && (
+        {(playList?.owner?.username === userDetail?.username) && (isLogedin) && (
           <div className="relative menu-container p-3 overflow-visible">
             <button
               className="text-gray-400 hover:text-white p-1"
