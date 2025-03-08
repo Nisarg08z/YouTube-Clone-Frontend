@@ -9,6 +9,7 @@ import PlayList from './PlayList/PlayList'
 import Subscribers from "./Subscribers/Subscribers"
 import Content from './Content/Content'
 import SettingPage from './SettingPage/SettingPage'
+import Search from './Search/Search'
 
 export
 {
@@ -22,5 +23,6 @@ export
     PlayList,
     Subscribers,
     Content,
-    SettingPage
+    SettingPage,
+    Search
 }

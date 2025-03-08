@@ -40,19 +40,20 @@ export const logoutUser = async () => {
 };
 
 // API fetch videos
-export const getVideos = async () => {
+export const getVideos = async (query = "") => {
   try {
-    const response = await axios.get(`${BASE_URL}videos`, {
+    const response = await axios.get(`${BASE_URL}videos?query=${query}`, {
       withCredentials: true,
     });
-    //console.log(response.data.message.docs)
-    const publishedVideos = response.data.message.docs.filter(video => video.isPublished)
+
+    const publishedVideos = response.data.message.docs.filter(video => video.isPublished);
     return publishedVideos;
   } catch (error) {
     console.error('API Error:', error.response?.data?.message || error.message);
     throw error.response?.data || error;
   }
 };
+
 
 // API sign up
 export const signUpUser = async (formData) => {
