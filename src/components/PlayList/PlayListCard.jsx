@@ -21,7 +21,6 @@ function PlayListCard({ playlist }) {
     const updatePlaylistVideos = async () => {
       const validVideos = await Promise.all(
         playlist.videos.map(async (video) => {
-
           const exists = await checkVideoExists(video);
           if (!exists) {
             await removeVideoFromPlaylist(video, playlist._id);
@@ -35,11 +34,28 @@ function PlayListCard({ playlist }) {
         })
       );
 
-      setFilteredVideos(validVideos.filter(Boolean)); 
+      setFilteredVideos(validVideos.filter(Boolean));
     };
 
     updatePlaylistVideos();
   }, [playlist.videos]);
+
+  // Close the menu when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        menuRef.current && !menuRef.current.contains(event.target) &&
+        menuButtonRef.current && !menuButtonRef.current.contains(event.target)
+      ) {
+        setMenuOpen(null);
+      }
+    };
+
+    document.addEventListener("click", handleClickOutside);
+    return () => {
+      document.removeEventListener("click", handleClickOutside);
+    };
+  }, []);
 
   const handleMenuToggle = () => {
     setMenuOpen(menuOpen ? null : playlist.id);

@@ -43,7 +43,6 @@ const SignalPlayListAllValues = () => {
   }, [playlistId]);
 
   if (loading) return <p>Loading...</p>;
-  if (!playListVideo.length) return <p>No videos available</p>;
 
   return (
     <div className="min-h-screen p-2 flex flex-col md:flex-row gap-4">
@@ -54,7 +53,7 @@ const SignalPlayListAllValues = () => {
 
       {/* Right Section - Playlist Videos */}
       <div className="w-[50%] flex flex-col overflow-hidden">
-        <VideoGrid videos={playListVideo} hideUploader={false} isHorizontal={true} />
+        <VideoGrid videos={playListVideo} hideUploader={false} isHorizontal={true} playList={playListDetails}/>
       </div>
     </div>
   );

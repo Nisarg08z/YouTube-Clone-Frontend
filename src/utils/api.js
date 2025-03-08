@@ -530,10 +530,12 @@ export const publishVideo = async (videoData) => {
 
 // API call to remove video from playlist
 export const removeVideoFromPlaylist = async (videoId, playlistId) => {
+  console.log(videoId, playlistId)
   try {
-    await axios.delete(`${BASE_URL}playlist/remove/${videoId}/${playlistId}`, {
+    const response = await axios.patch(`${BASE_URL}playlist/remove/${videoId}/${playlistId}`,{}, {
       withCredentials: true,
     });
+    return response.data
   } catch (error) {
     console.error("Error removing video:", error.response?.data?.message || error.message);
   }
