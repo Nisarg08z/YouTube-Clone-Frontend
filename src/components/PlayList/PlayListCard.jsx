@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect, useContext } from "react";
-import { editPlayList, deletePlayList, checkVideoExists, removeVideoFromPlaylist } from "../../utils/api";
+import { editPlayList, deletePlayList, checkVideoExists, removeVideoFromPlaylist, getVideoDetails } from "../../utils/api";
 import { Link } from "react-router-dom";
 import { UserContext } from "../../contexts/UserContext";
 
@@ -17,24 +17,25 @@ function PlayListCard({ playlist }) {
 
   if (!playlist) return null;
 
-  // Fetch latest playlist videos and remove unavailable ones
   useEffect(() => {
     const updatePlaylistVideos = async () => {
       const validVideos = await Promise.all(
         playlist.videos.map(async (video) => {
-          if (!video.isPublished) return null;
 
-          const exists = await checkVideoExists(video._id);
+          const exists = await checkVideoExists(video);
           if (!exists) {
-            await removeVideoFromPlaylist(video._id, playlist._id);
+            await removeVideoFromPlaylist(video, playlist._id);
             return null;
           }
+
+          const details = await getVideoDetails(video);
+          if (!details.isPublished) return null;
 
           return video;
         })
       );
 
-      setFilteredVideos(validVideos.filter(Boolean)); // Remove null values
+      setFilteredVideos(validVideos.filter(Boolean)); 
     };
 
     updatePlaylistVideos();

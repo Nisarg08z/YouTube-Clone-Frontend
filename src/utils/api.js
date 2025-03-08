@@ -457,9 +457,9 @@ export const deleteTweet = async (tweetId) => {
 
 export const statsContent = async (channelId) => {
   try {
-    console.log(channelId)
+    //console.log(channelId)
     const response = await axios.get(`${BASE_URL}dashboard/stats/${channelId}`, { withCredentials: true });
-    console.log(response)
+    //console.log(response)
     return response.data.message;
   } catch (error) {
     console.error("Error fetching stats Content:", error);
@@ -482,7 +482,7 @@ export const togglePublishVideo = async (videoId) => {
       {}, 
       { withCredentials: true } 
     );
-    console.log("Response:", response);
+    //console.log("Response:", response);
     return response.data.message.isPublished;
   } catch (error) {
     console.error("Error toggling publish status:", error.response?.data || error);

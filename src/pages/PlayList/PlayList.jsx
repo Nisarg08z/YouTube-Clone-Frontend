@@ -8,14 +8,13 @@ const PlayList = ({ userid }) => {
     const { userDetail } = useContext(UserContext);
     const [playlists, setPlaylists] = useState([]);
     const [loading, setLoading] = useState(true);
-
+    const [error, setError] = useState('');
 
     useEffect(() => {
-
-        const user = userid || userDetail._id;
+        const user = userid || userDetail?._id;
 
         if (!user) {
-            setError("User not found.");
+            setLoading(true);
             return;
         }
 
@@ -25,16 +24,21 @@ const PlayList = ({ userid }) => {
                 setPlaylists(response);
             } catch (err) {
                 console.error(err);
+                setError("Failed to load playlists.");
             } finally {
                 setLoading(false);
             }
         };
 
         fetchPlayList();
-    }, [ userDetail, userid]);
+    }, [userid, userDetail]);
 
     if (loading) {
         return <div className="text-center">Loading...</div>;
+    }
+
+    if (error) {
+        return <div className="text-center text-red-500">{error}</div>;
     }
 
     return (

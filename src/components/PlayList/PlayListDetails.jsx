@@ -1,9 +1,27 @@
-import React from "react";
+import React, {useEffect,useState} from "react";
 import { formatDistanceToNow } from "date-fns";
 import { Link } from "react-router-dom";
 
 const PlayListDetails = ({ playList }) => {
-    console.log("-------->", playList);
+    //console.log("-------->", playList);
+    const [unPublishedVideos, setunPublishedVideos] = useState([]);
+
+  useEffect(() => {
+    const updatePlaylistVideos = async () => {
+      const validVideos = await Promise.all(
+        playList.videos.map(async (video) => {
+
+          if (!video.isPublished) return null;
+
+          return video;
+        })
+      );
+
+      setunPublishedVideos(validVideos.filter(Boolean)); 
+    };
+
+    updatePlaylistVideos(); 
+  }, [playList.videos]);
 
     return (
         <div>
@@ -18,7 +36,7 @@ const PlayListDetails = ({ playList }) => {
                     <p className="text-white text-lg">
                         {playList?.createdAt ? formatCreatedAt(playList.createdAt) : "N/A"}
                     </p>
-                    <p className="text-gray-300 text-sm">{playList?.videos?.length || 0} Videos</p>
+                    <p className="text-gray-300 text-sm">{unPublishedVideos.length} Videos</p>
                 </div>
             </div>
             <p className="text-white text-xl font-semibold mt-4">
