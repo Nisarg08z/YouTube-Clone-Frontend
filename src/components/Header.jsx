@@ -23,7 +23,7 @@ const Header = () => {
 
   const handleProfile = () => {
     setIsDropdownOpen(false);
-    navigate(`/profile/${userDetail.username}`);
+    navigate(`/profile/${userDetail?.username}`);
   };
 
   const toggleDropdown = () => {
@@ -76,7 +76,7 @@ const Header = () => {
               onClick={toggleDropdown}
             >
               <img
-                src={userDetail.avatar}
+                src={userDetail?.avatar}
                 alt="User Avatar"
                 className="w-full rounded-full h-full object-cover"
               />
@@ -86,13 +86,13 @@ const Header = () => {
               <div className="absolute right-0 mt-2 w-48 bg-gray-800 rounded shadow-lg border border-gray-700 z-50">
                 <div className="flex items-center bg-gray-800 rounded-lg p-4">
                   <img
-                    src={userDetail.avatar}
+                    src={userDetail?.avatar}
                     alt="User Avatar"
                     className="w-10 h-10 rounded-full object-cover mr-4"
                   />
                   <div>
-                    <p className="text-white font-bold">{userDetail.fullName}</p>
-                    <p className="text-gray-400 text-sm">{userDetail.email}</p>
+                    <p className="text-white font-bold">{userDetail?.fullName}</p>
+                    <p className="text-gray-400 text-sm">{userDetail?.email}</p>
                   </div>
                 </div>
                 <hr className="border-gray-700" />
