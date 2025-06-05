@@ -3,25 +3,29 @@ import { Header, Sidebar } from "./components";
 import { Outlet, useLocation } from "react-router-dom";
 
 function Layout() {
-  const [hideSidebar, setHideSidebar] = useState(false);
+  const [collapseSidebar, setCollapseSidebar] = useState(false);
   const location = useLocation();
 
   useEffect(() => {
-    if (location.pathname.startsWith("/video/") || location.pathname.startsWith("/Content") || location.pathname.startsWith("/Setting")) {
-      setHideSidebar(true);
-    } else {
-      setHideSidebar(false);
-    }
+    const shouldCollapse =
+      location.pathname.startsWith("/video/") ||
+      location.pathname.startsWith("/Content") ||
+      location.pathname.startsWith("/Setting");
+    setCollapseSidebar(shouldCollapse);
   }, [location.pathname]);
 
   return (
-    <div className="flex h-screen bg-black text-white">
-      <Sidebar hideSidebar={hideSidebar} />
+    <div className="bg-black text-white min-h-screen flex flex-col md:flex-row">
+      <Sidebar collapsed={collapseSidebar} />
       <div className="flex flex-col flex-1">
         <Header />
-        <div className="flex-1 overflow-auto p-4">
+        <main
+          className={`flex-1 overflow-auto p-4 transition-all duration-300 ${
+            collapseSidebar ? "md:ml-20" : "md:ml-48"
+          }`}
+        >
           <Outlet />
-        </div>
+        </main>
       </div>
     </div>
   );

@@ -2,11 +2,16 @@ import React, { useContext, useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { UserContext } from "../contexts/UserContext";
 import { logoutUser } from "../utils/api";
+import { FiSearch } from "react-icons/fi";
+import { IoMdClose } from "react-icons/io";
+import { motion } from "framer-motion";
+
 
 const Header = () => {
   const { isLogedin, setisLogedin, userDetail, setuserDetail } = useContext(UserContext);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
+  const [showMobileSearch, setShowMobileSearch] = useState(false);
   const navigate = useNavigate();
 
   const handleLogout = async () => {
@@ -26,54 +31,65 @@ const Header = () => {
     navigate(`/profile/${userDetail?.username}`);
   };
 
-  const toggleDropdown = () => {
-    setIsDropdownOpen((prevState) => !prevState);
-  };
-
   const handleSearch = () => {
     if (searchTerm.trim()) {
       navigate(`/search?query=${encodeURIComponent(searchTerm)}`);
+      setShowMobileSearch(false); // hide overlay on mobile
     }
   };
 
+  const toggleDropdown = () => setIsDropdownOpen((prev) => !prev);
+
   useEffect(() => {
-    const handleOutsideClick = (event) => {
-      if (!event.target.closest(".dropdown-menu")) {
+    const handleOutsideClick = (e) => {
+      if (!e.target.closest(".dropdown-menu")) {
         setIsDropdownOpen(false);
       }
     };
-
     if (isDropdownOpen) {
       document.addEventListener("click", handleOutsideClick);
     }
-
-    return () => {
-      document.removeEventListener("click", handleOutsideClick);
-    };
+    return () => document.removeEventListener("click", handleOutsideClick);
   }, [isDropdownOpen]);
 
   return (
-    <header className="flex items-center justify-between px-4 py-1 bg-gray-900 border-b border-gray-700">
-      <div className="w-1/4"></div>
+    <header className="flex items-center justify-between px-4 py-2 bg-[#1e1e1e] border-b border-gray-800 sticky top-0 z-50">
+      {/* Logo */}
+      <Link to="/" className="flex items-center ">
+        <img src="/assets/logos/logo.png" alt="Logo" className="h-8 md:h-10" />
+        < lable className=" text-xl ml-1 hover:text-gray-300" > YouTube </lable>
+      </Link>
 
-      {/* Search Bar with Button */}
-      <div className="flex-1 flex justify-center">
-        <input
-          type="text"
-          placeholder="Search"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          className="w-3/4 p-1 text-sm text-c bg-gray-800 text-white rounded-md outline-none border border-gray-600 focus:border-purple-500 transition"
-        />
-        <button
-          onClick={handleSearch}
-          className="ml-2 px-3 py-1 bg-purple-600 text-white rounded hover:bg-purple-700 transition"
-        >
-          🔍
-        </button>
+      {/* Search bar (hidden on small screens) */}
+      <div className="flex-1 hidden md:flex justify-center px-4">
+        <div className="flex w-3/4 max-w-xl">
+          <input
+            type="text"
+            placeholder="Search"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && handleSearch()}
+            className="w-full p-2 text-sm text-white bg-gray-800 rounded-l-md border border-gray-600 focus:outline-none focus:border-purple-500"
+          />
+          <button
+            onClick={handleSearch}
+            className="bg-purple-600 hover:bg-purple-700 text-white px-4 rounded-r-md"
+          >
+            🔍
+          </button>
+        </div>
       </div>
 
-      <div className="w-1/4 flex justify-end items-center space-x-4">
+      {/* Right side - Mobile search, Login/Profile */}
+      <div className="flex items-center gap-4">
+        {/* Mobile Search Icon */}
+        <button
+          className="md:hidden text-white text-xl"
+          onClick={() => setShowMobileSearch(true)}
+        >
+          <FiSearch />
+        </button>
+
         {!isLogedin ? (
           <Link to="/Login">
             <button className="px-4 py-2 bg-purple-600 text-white rounded hover:bg-purple-700 transition">
@@ -82,31 +98,87 @@ const Header = () => {
           </Link>
         ) : (
           <div className="relative dropdown-menu">
-            <button className="flex items-center justify-center w-11 h-11 rounded-full" onClick={toggleDropdown}>
-              <img src={userDetail?.avatar} alt="User Avatar" className="w-full rounded-full h-full object-cover" />
+            <button
+              className="flex items-center justify-center w-10 h-10 rounded-full"
+              onClick={toggleDropdown}
+            >
+              <img
+                src={userDetail?.avatar}
+                alt="User Avatar"
+                className="w-full h-full rounded-full object-cover"
+              />
             </button>
             {isDropdownOpen && (
-              <div className="absolute right-0 mt-2 w-48 bg-gray-800 rounded shadow-lg border border-gray-700 z-50">
-                <div className="flex items-center bg-gray-800 rounded-lg p-4">
-                  <img src={userDetail?.avatar} alt="User Avatar" className="w-10 h-10 rounded-full object-cover mr-4" />
-                  <div>
-                    <p className="text-white font-bold">{userDetail?.fullName}</p>
-                    <p className="text-gray-400 text-sm">{userDetail?.email}</p>
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95, y: -10 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.95, y: -10 }}
+                transition={{ duration: 0.2 }}
+                className="absolute right-0 mt-2 w-64 bg-[#2c2c2c] rounded-xl shadow-xl border border-gray-700 z-[9999] overflow-hidden"
+              >
+                <div className="flex items-center gap-4 p-4">
+                  <img
+                    src={userDetail?.avatar}
+                    alt="User Avatar"
+                    className="w-12 h-12 rounded-full object-cover border border-gray-600"
+                  />
+                  <div className="text-sm">
+                    <p className="text-white font-semibold">{userDetail?.fullName}</p>
+                    <p className="text-gray-400">{userDetail?.email}</p>
                   </div>
                 </div>
-                <hr className="border-gray-700" />
-                <button onClick={handleProfile} className="w-full px-4 py-2 text-left hover:bg-gray-700 text-white transition">
-                  Profile
-                </button>
-                <hr className="border-gray-700" />
-                <button onClick={handleLogout} className="w-full px-4 py-2 text-left hover:bg-gray-700 text-white transition">
-                  Logout
-                </button>
-              </div>
+
+                <div className="border-t border-gray-700">
+                  <button
+                    onClick={handleProfile}
+                    className="w-full px-5 py-3 text-left text-white hover:bg-gray-700 transition duration-150"
+                  >
+                    👤 Profile
+                  </button>
+                  <button
+                    onClick={handleLogout}
+                    className="w-full px-5 py-3 text-left text-red-400 hover:bg-gray-800 transition duration-150"
+                  >
+                    🚪 Logout
+                  </button>
+                </div>
+              </motion.div>
             )}
           </div>
         )}
       </div>
+
+      {/* Mobile Search Overlay */}
+      {showMobileSearch && (
+        <div className="fixed inset-0 z-50 bg-black bg-opacity-60 backdrop-blur-sm flex flex-col p-4 animate-fadeIn">
+          <div className="flex justify-end mb-4">
+            <button
+              onClick={() => setShowMobileSearch(false)}
+              className="text-white text-3xl"
+            >
+              <IoMdClose />
+            </button>
+          </div>
+          <div className="flex w-full items-center">
+            <input
+              type="text"
+              placeholder="Search"
+              autoFocus
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && handleSearch()}
+              className="w-full p-3 text-lg text-white bg-gray-800 rounded-l-md border border-gray-600 focus:outline-none"
+            />
+            <button
+              onClick={handleSearch}
+              className="bg-purple-600 hover:bg-purple-700 text-white px-5 py-3 rounded-r-md text-lg"
+            >
+              🔍
+            </button>
+          </div>
+        </div>
+      )}
+
     </header>
   );
 };

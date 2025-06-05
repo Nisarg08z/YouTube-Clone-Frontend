@@ -1,8 +1,8 @@
 import React, { useContext } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { UserContext } from "../contexts/UserContext";
 
-const Sidebar = ({ hideSidebar }) => {
+const Sidebar = ({ collapsed = false }) => {
   const { isLogedin } = useContext(UserContext);
   const navigate = useNavigate();
 
@@ -16,69 +16,78 @@ const Sidebar = ({ hideSidebar }) => {
   ];
 
   const bottomMenuItems = [
-    { name: "Support", icon: "support.png", path: "/" },
     { name: "Settings", icon: "settings.png", path: "/Setting" },
   ];
 
   const handleNavigation = (path) => {
     if (!isLogedin) {
-      navigate("/login");  // Redirect to login if not logged in
+      navigate("/login");
     } else {
-      navigate(path);  // Navigate to the desired path if logged in
+      navigate(path);
     }
   };
 
   return (
-    <aside
-      className={`bg-black border-r border-gray-700 flex flex-col justify-between h-screen p-4 transition-all duration-300 ${
-        hideSidebar ? "w-20" : "w-64"
-      }`}
-    >
-      <div>
-        <div className="flex items-center mb-6 justify-center">
-          <Link to="/">
-            <img src="/assets/logos/logo.png" alt="Logo" className="h-10" />
-          </Link>
-        </div>
-        <nav>
+    <>
+      {/* Desktop Sidebar */}
+      <aside
+        className={`hidden md:flex flex-col bg-[#1e1e1e] border-r border-gray-800 ${
+          collapsed ? "w-20" : "w-48"
+        } h-screen fixed left-0 top-0 z-40 transition-all duration-300`}
+      >
+
+        <nav className="flex-1 mt-20 space-y-2">
           {menuItems.map((item) => (
             <button
               key={item.name}
               onClick={() => handleNavigation(item.path)}
-              className={`w-full flex items-center text-gray-300 hover:text-white py-2 px-3 rounded hover:bg-gray-800 ${
-                hideSidebar ? "justify-center" : ""
-              }`}
+              className="flex items-center text-gray-300 hover:text-white p-2 px-7 rounded hover:bg-gray-800 transition-all duration-200 w-full"
             >
               <img
-                src={`../assets/icons/${item.icon}`}
+                src={`/assets/icons/${item.icon}`}
                 alt={item.name}
                 className="h-6"
               />
-              {!hideSidebar && <span className="ml-3">{item.name}</span>}
+              {!collapsed && <span className="ml-3">{item.name}</span>}
             </button>
           ))}
         </nav>
-      </div>
 
-      <div>
-        {bottomMenuItems.map((item) => (
+        <div className="mt-auto mb-4">
+          {bottomMenuItems.map((item) => (
+            <button
+              key={item.name}
+              onClick={() => handleNavigation(item.path)}
+              className="flex items-center text-gray-300 hover:text-white p-2 px-7 rounded hover:bg-gray-800 transition-all duration-200 w-full"
+            >
+              <img
+                src={`/assets/icons/${item.icon}`}
+                alt={item.name}
+                className="h-6"
+              />
+              {!collapsed && <span className="ml-3">{item.name}</span>}
+            </button>
+          ))}
+        </div>
+      </aside>
+
+      {/* Mobile Bottom Navigation - Always show icons, no labels */}
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-[#1e1e1e] border-r border-gray-800 flex justify-around py-2">
+        {[...menuItems, ...bottomMenuItems].map((item) => (
           <button
             key={item.name}
             onClick={() => handleNavigation(item.path)}
-            className={`w-full flex items-center text-gray-300 hover:text-white py-2 px-3 rounded hover:bg-gray-800 ${
-              hideSidebar ? "justify-center" : ""
-            }`}
+            className="flex flex-col items-center text-gray-300 hover:text-white transition-all duration-200"
           >
             <img
-              src={`../assets/icons/${item.icon}`}
+              src={`/assets/icons/${item.icon}`}
               alt={item.name}
               className="h-6"
             />
-            {!hideSidebar && <span className="ml-3">{item.name}</span>}
           </button>
         ))}
-      </div>
-    </aside>
+      </nav>
+    </>
   );
 };
 

@@ -2,16 +2,15 @@ import React, { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { loginUser } from '../../utils/api';
 import { UserContext } from '../../contexts/UserContext';
+import { Loader2 } from 'lucide-react';
+import toast from 'react-hot-toast';
 
 const Login = () => {
   const navigate = useNavigate();
   const { isLogedin, setisLogedin } = useContext(UserContext);
   const { userDetail, setuserDetail } = useContext(UserContext);
 
-  const [formData, setFormData] = useState({
-    email: '',
-    password: '',
-  });
+  const [formData, setFormData] = useState({ email: '', password: '' });
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
 
@@ -24,7 +23,6 @@ const Login = () => {
     const newErrors = {};
     if (!formData.email.trim()) newErrors.email = 'Email is required.';
     if (!formData.password.trim()) newErrors.password = 'Password is required.';
-
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -32,74 +30,90 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validateForm()) return;
-
     try {
       setLoading(true);
       const response = await loginUser(formData);
-      localStorage.setItem("token" , response.data.accessToken)
-      console.log(localStorage.getItem("token"))
+      localStorage.setItem("token", response.data.accessToken);
       if (response.success) {
-        setisLogedin(true)
-        setuserDetail(response.data.user)
-        alert('Login successful!');
-        console.log(response.user)
+        setisLogedin(true);
+        setuserDetail(response.data.user);
         navigate('/');
       } else {
-        alert(response.message || 'Login failed!');
+        toast.error(response.message || 'Login failed!');
       }
     } catch (error) {
-      console.error('Error logging in:', error);
-      alert(error.response?.data?.message || 'Something went wrong. Please try again.');
+      console.error('Login error:', error);
+      toast.error(error.response?.data?.message || 'Something went wrong.');
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="flex justify-center items-center h-screen bg-gray-900 text-white">
-      <div className="bg-gray-800 p-8 rounded-lg shadow-lg w-96">
-        <h2 className="text-2xl font-bold mb-6 text-center">Log In</h2>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          {/* Email Input */}
+    <div
+      className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#0f0f0f] via-[#1a1a1a] to-[#111] text-white"
+    >
+      <div className="bg-[#1e1e1e] border border-gray-700 p-8 rounded-2xl shadow-lg w-full max-w-md mx-4 sm:mx-0 animate-fade-in">
+        <div className="text-center mb-6">
+          <img
+            src="/assets/logos/logo.png"
+            alt="Logo"
+            className="w-14 h-14 mx-auto mb-2"
+          />
+          <h2 className="text-3xl font-semibold">Welcome Back</h2>
+          <p className="text-sm text-gray-400">Login to your account</p>
+        </div>
+
+        <form onSubmit={handleSubmit} className="space-y-5">
           <div>
-            <label htmlFor="email" className="block text-sm mb-1">Email</label>
+            <label htmlFor="email" className="block text-sm font-medium text-gray-300">
+              Email
+            </label>
             <input
               type="email"
               id="email"
               name="email"
               value={formData.email}
               onChange={handleInputChange}
-              className="w-full p-2 rounded bg-gray-700 focus:outline-none focus:ring-2 focus:ring-purple-500"
+              className="w-full px-4 py-2 mt-1 rounded-lg bg-[#2c2c2c] border border-gray-600 text-white focus:outline-none focus:ring-2 focus:ring-purple-500 transition"
             />
-            {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
+            {errors.email && (
+              <p className="text-sm text-red-400 mt-1">{errors.email}</p>
+            )}
           </div>
-          {/* Password Input */}
+
           <div>
-            <label htmlFor="password" className="block text-sm mb-1">Password</label>
+            <label htmlFor="password" className="block text-sm font-medium text-gray-300">
+              Password
+            </label>
             <input
               type="password"
               id="password"
               name="password"
               value={formData.password}
               onChange={handleInputChange}
-              className="w-full p-2 rounded bg-gray-700 focus:outline-none focus:ring-2 focus:ring-purple-500"
+              className="w-full px-4 py-2 mt-1 rounded-lg bg-[#2c2c2c] border border-gray-600 text-white focus:outline-none focus:ring-2 focus:ring-purple-500 transition"
             />
-            {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password}</p>}
+            {errors.password && (
+              <p className="text-sm text-red-400 mt-1">{errors.password}</p>
+            )}
           </div>
-          {/* Submit Button */}
+
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-purple-600 hover:bg-purple-700 p-2 rounded text-white font-bold disabled:opacity-50"
+            className="w-full flex justify-center items-center gap-2 bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2 rounded-lg transition disabled:opacity-50"
           >
-            {loading ? 'Logging In...' : 'Log In'}
+            {loading && <Loader2 className="animate-spin h-5 w-5" />}
+            {loading ? 'Logging in...' : 'Log In'}
           </button>
         </form>
-        <p className="text-sm mt-4 text-center">
-          Don't have an account?{' '}
+
+        <p className="text-center text-sm text-gray-400 mt-5">
+          Don’t have an account?{' '}
           <span
             onClick={() => navigate('/signup')}
-            className="text-purple-500 cursor-pointer"
+            className="text-purple-400 font-medium cursor-pointer hover:underline"
           >
             Sign Up
           </span>
