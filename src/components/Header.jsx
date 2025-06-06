@@ -57,7 +57,7 @@ const Header = () => {
       {/* Logo */}
       <Link to="/" className="flex items-center ">
         <img src="/assets/logos/logo.png" alt="Logo" className="h-8 md:h-10" />
-        < lable className=" text-xl ml-1 hover:text-gray-300" > YouTube </lable>
+        < lable className=" text-xl ml-1 hover:text-gray-300" > PlayTube </lable>
       </Link>
 
       {/* Search bar (hidden on small screens) */}
