@@ -39,26 +39,25 @@ const VideoCard = ({
   return (
     <Link to={`/video/${video._id}`} className="block group">
       <div
-        className={`${
-          isHorizontal
+        className={`${isHorizontal
             ? "flex flex-row w-full gap-4"
-            : "flex flex-col w-full max-w-[18rem] min-w-[220px] mx-auto"
-        } bg-[#1e1e1e] border border-gray-700 rounded-xl shadow-md overflow-hidden relative transition-shadow group-hover:shadow-lg`}
+            : "flex flex-col w-full max-w-[320px]  mx-auto"
+
+          } bg-[#1e1e1e] border border-gray-700 rounded-xl shadow-md overflow-hidden relative transition-shadow group-hover:shadow-lg`}
       >
+
         {/* Thumbnail */}
         <div
-          className={`relative ${
-            isHorizontal
+          className={`relative ${isHorizontal
               ? "w-48 h-32 sm:w-40 sm:h-28 md:w-44 md:h-30 lg:w-48 lg:h-32 flex-shrink-0"
               : "w-full aspect-video min-w-[220px] max-w-full"
-          }`}
+            }`}
         >
           <img
             src={video.thumbnail}
             alt={video.title}
-            className={`w-full h-full object-cover ${
-              isHorizontal ? "rounded-l-lg" : "rounded-t-xl"
-            }`}
+            className={`w-full h-full object-cover ${isHorizontal ? "rounded-l-lg" : "rounded-t-xl"
+              }`}
           />
           <span className="absolute bottom-2 right-2 bg-black bg-opacity-75 text-white text-xs px-1.5 py-0.5 rounded">
             {formatDuration(video.duration)}

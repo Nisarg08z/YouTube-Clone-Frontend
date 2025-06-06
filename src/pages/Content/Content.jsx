@@ -31,24 +31,30 @@ const Content = () => {
   }, [userDetail?._id]);
 
   if (loading) {
-    return <div className="text-white text-center p-6">Loading...</div>;
+    return (
+      <div className="flex items-center justify-center h-64 text-white text-lg">
+        Loading...
+      </div>
+    );
   }
 
   return (
-    <div className="p-6 bg-black text-white">
-
+    <div className="p-6 bg-gradient-to-b from-[#0f0f0f] via-[#1a1a1a] to-[#111] min-h-screen text-white">
+      {/* Upload Section */}
       <VideoUpload userDetail={userDetail} />
-      
+
+      {/* Stats Cards */}
       {stats && (
-        <div className="grid grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">
           <StatCard title="Total Views" value={stats.totalViews} />
           <StatCard title="Total Followers" value={stats.totalSubscribers} />
           <StatCard title="Total Likes" value={stats.totalLikes} />
         </div>
       )}
 
-      <div className="mt-6">
-        <h2 className="text-xl mb-4">Uploaded Videos</h2>
+      {/* Video Table */}
+      <div className="mt-8">
+        <h2 className="text-xl font-semibold mb-4">Uploaded Videos</h2>
         <VideoTableGrid videos={videos} />
       </div>
     </div>

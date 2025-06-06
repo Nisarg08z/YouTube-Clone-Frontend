@@ -1,7 +1,7 @@
 import { useCallback, useState } from "react";
 import { useDropzone } from "react-dropzone";
 
-const FileUpload = ({ onFileSelect, acceptedFileTypes = {} }) => {
+const FileUpload = ({ onFileSelect, acceptedFileTypes = {}, disabled }) => {
   const [filePreview, setFilePreview] = useState(null);
   const [isUploaded, setIsUploaded] = useState(false);
 
@@ -9,13 +9,9 @@ const FileUpload = ({ onFileSelect, acceptedFileTypes = {} }) => {
     (acceptedFiles) => {
       const file = acceptedFiles[0];
       if (!file) return;
-      
-      setFilePreview(URL.createObjectURL(file)); // Generate preview
-      setIsUploaded(true); // Hide upload box
-
-      if (onFileSelect) {
-        onFileSelect(file);
-      }
+      setFilePreview(URL.createObjectURL(file));
+      setIsUploaded(true);
+      onFileSelect?.(file);
     },
     [onFileSelect]
   );
@@ -27,11 +23,9 @@ const FileUpload = ({ onFileSelect, acceptedFileTypes = {} }) => {
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
-    accept: {
-      "image/*": [".jpg", ".jpeg", ".png", ".gif", ".webp", ".svg"],
-      "video/*": [".mp4", ".mov", ".avi", ".mkv"],
-    },
+    accept: acceptedFileTypes,
     multiple: false,
+    disabled,
   });
 
   return (
@@ -39,51 +33,35 @@ const FileUpload = ({ onFileSelect, acceptedFileTypes = {} }) => {
       {!isUploaded ? (
         <div
           {...getRootProps()}
-          className="w-full h-40 border-2 border-dashed border-gray-500 rounded-lg flex flex-col items-center justify-center text-center p-4 cursor-pointer bg-gray-800 hover:bg-gray-700 transition"
+          className={`border-2 border-dashed rounded-lg p-6 flex flex-col items-center justify-center text-gray-400 bg-[#2c2c2c] hover:bg-[#333] transition ${
+            disabled ? "opacity-50 cursor-not-allowed" : "cursor-pointer"
+          }`}
         >
           <input {...getInputProps()} />
-          <div className="text-gray-300">
+          <div className="text-center animate-fade-in">
             <div className="w-10 h-10 bg-gray-600 rounded-full flex items-center justify-center mb-2">
-              📤
+              📁
             </div>
-            {isDragActive ? (
-              <p>Drop the file here...</p>
-            ) : (
-              <p>
-                <span className="text-teal-400">Click to upload</span> or drag
-                and drop
-              </p>
-            )}
-            <p className="text-xs">
-              {Object.keys(acceptedFileTypes).includes("image/*")
-                ? "SVG, PNG, JPG, GIF, WEBP"
-                : "MP4, MOV, AVI, MKV"}{" "}
-              (max. 800x400px)
+            <p>{isDragActive ? "Drop the file here..." : "Click or drag to upload"}</p>
+            <p className="text-xs text-gray-500 mt-1">
+              Supported: SVG, PNG, JPG, GIF, WEBP / MP4, MOV
             </p>
           </div>
         </div>
       ) : (
-        <div className="mt-4 flex flex-col items-center">
-          {Object.keys(acceptedFileTypes).includes("video/*") ? (
-            <video className="max-w-full max-h-40 rounded-lg" controls>
-              <source src={filePreview} type="video/mp4" />
-            </video>
+        <div className="flex flex-col items-center mt-4 space-y-2 animate-fade-in">
+          {acceptedFileTypes["video/*"] ? (
+            <video className="w-full max-h-40 rounded-lg" controls src={filePreview} />
           ) : (
-            <img
-              src={filePreview}
-              alt="File Preview"
-              className="max-w-full max-h-40 rounded-lg"
-            />
+            <img src={filePreview} alt="Preview" className="max-h-40 rounded-lg" />
           )}
-          <div className="flex items-center gap-3 mt-2">
-            <p className="text-green-400">File uploaded successfully!</p>
-            <button
-              onClick={removeFile}
-              className="text-red-400 hover:text-red-500 transition"
-            >
-              ❌ Remove
-            </button>
-          </div>
+          <div className="text-green-400">File uploaded successfully</div>
+          <button
+            onClick={removeFile}
+            className="text-red-400 hover:text-red-500 transition"
+          >
+            ❌ Remove
+          </button>
         </div>
       )}
     </div>

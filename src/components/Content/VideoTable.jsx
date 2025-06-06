@@ -7,7 +7,8 @@ const VideoTable = ({ video }) => {
   const [isPublished, setIsPublished] = useState(video.isPublished);
   const [isEditing, setIsEditing] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
-  const [isDeleting, setIsDeleting] = useState(false); 
+  const [isDeleting, setIsDeleting] = useState(false);
+
   const [editedVideo, setEditedVideo] = useState({
     title: video.title,
     description: video.description,
@@ -16,165 +17,114 @@ const VideoTable = ({ video }) => {
 
   const handleTogglePublish = async () => {
     try {
-      const updatedStatus = await togglePublishVideo(video._id); 
-      setIsPublished(updatedStatus);
-    } catch (error) {
-      console.error("Error toggling publish status:", error);
+      const updated = await togglePublishVideo(video._id);
+      setIsPublished(updated);
+    } catch (e) {
+      console.error("Toggle error", e);
     }
   };
-  
 
-  const handleEditChange = (e) => {
-    setEditedVideo({ ...editedVideo, [e.target.name]: e.target.value });
+  const handleEditSubmit = async () => {
+    if (!editedVideo.title || !editedVideo.description) return;
+    setIsUploading(true);
+    try {
+      const formData = new FormData();
+      formData.append("title", editedVideo.title);
+      formData.append("description", editedVideo.description);
+      if (editedVideo.thumbnail instanceof File)
+        formData.append("thumbnail", editedVideo.thumbnail);
+
+      await editVideo(video._id, formData);
+      setIsEditing(false);
+      window.location.reload();
+    } catch (e) {
+      console.error("Edit error", e);
+    } finally {
+      setIsUploading(false);
+    }
   };
 
   const handleFileChange = (file) => {
-    if (file instanceof File) {
-      setEditedVideo({ ...editedVideo, thumbnail: file });
-    }
-  };
-  
-
-  const handleEditSubmit = async () => {
-    if (!editedVideo.title || !editedVideo.description) {
-        alert("Title and description are required.");
-        return;
-    }
-
-    setIsUploading(true);
-
-    try {
-        const formData = new FormData();
-        formData.append("title", editedVideo.title);
-        formData.append("description", editedVideo.description);
-
-        if (editedVideo.thumbnail instanceof File) {
-            formData.append("thumbnail", editedVideo.thumbnail);
-            console.log("📤 Sending file:", editedVideo.thumbnail);
-        } else {
-            console.log("⚠ No new file selected");
-        }
-
-        const response = await editVideo(video._id, formData);
-
-        console.log("✅ Update successful:", response);
-        setIsEditing(false);
-        window.location.reload();
-    } catch (error) {
-        console.error("❌ Error updating video:", error);
-    } finally {
-        setIsUploading(false);
-    }
-};
-
-
-  
-
-
-  const handleDeleteClick = () => {
-    setIsDeleting(true); 
-  };
-
-  const handleDeleteConfirm = async () => {
-    try {
-      await deleteVideo(video._id);
-      window.location.reload();
-    } catch (error) {
-      console.error("Error deleting video:", error);
-    } finally {
-      setIsDeleting(false); 
-    }
-  };
-
-  const handleDeleteCancel = () => {
-    setIsDeleting(false); 
+    if (file) setEditedVideo((prev) => ({ ...prev, thumbnail: file }));
   };
 
   return (
     <>
-      <tr className="border-b border-gray-600 hover:bg-gray-700">
-        <td className="py-3 px-6">
-          <ToggleSwitch isOn={isPublished} onToggle={handleTogglePublish} />
+      <tr className="border-b border-gray-700 hover:bg-[#2a2a2a] transition">
+        {/* Status column: Toggle on top, label below */}
+        <td className="p-4 text-center">
+          <div className="flex flex-col items-center justify-center gap-1">
+            <ToggleSwitch isOn={isPublished} onToggle={handleTogglePublish} />
+            <span className="text-xs text-white opacity-70">
+              {isPublished ? "Published" : "Draft"}
+            </span>
+          </div>
         </td>
 
-        <td className="py-3 px-6">
-          <span className="ml-2">{isPublished ? "Published" : "Not Published"}</span>
-        </td>
-
-        <td className="py-3 px-6 break-words w-1/3">{video.title}</td>
-
-        <td className="py-3 px-6">{video.likesCount}</td>
-
-        <td className="py-3 px-6">{new Date(video.createdAt).toLocaleDateString()}</td>
-
-        <td className="py-3 px-6 flex space-x-2 items-center">
+        <td className="pl-7 max-w-xs truncate">{video.title}</td>
+        <td className="pl-10 ">{video.likesCount}</td>
+        <td className="pl-8">{new Date(video.createdAt).toLocaleDateString()}</td>
+        <td className=" space-x-2">
           <button
+            className="bg-blue-600 hover:bg-blue-700 px-3 py-1 rounded text-sm"
             onClick={() => setIsEditing(true)}
-            className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-700 focus:outline-none"
           >
             Edit
           </button>
           <button
-            onClick={handleDeleteClick}
-            className="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-700 focus:outline-none"
+            className="bg-red-600 hover:bg-red-700 px-3 py-1 rounded text-sm"
+            onClick={() => setIsDeleting(true)}
           >
             Delete
           </button>
         </td>
       </tr>
 
-      {/* Render the edit modal outside of <tbody> */}
+      {/* Edit Modal */}
       {isEditing && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="bg-gray-800 p-6 rounded-lg w-96 text-white">
-            <h3 className="text-lg font-semibold mb-4">Edit Video</h3>
-            <label className="block mb-2">Title</label>
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-[#1e1e1e] p-6 rounded-xl w-[90%] max-w-lg text-white shadow-xl space-y-4">
+            <h2 className="text-lg font-semibold">Edit Video</h2>
+
             <input
               type="text"
               name="title"
               value={editedVideo.title}
-              onChange={handleEditChange}
-              className="bg-gray-700 text-white px-2 py-1 rounded w-full mb-3"
-              disabled={isUploading}
+              onChange={(e) =>
+                setEditedVideo({ ...editedVideo, title: e.target.value })
+              }
+              placeholder="Title"
+              className="w-full p-2 bg-[#2c2c2c] rounded border border-gray-600 focus:ring-2 focus:ring-purple-600 outline-none"
             />
 
-            <label className="block mb-2">Description</label>
             <textarea
               name="description"
               value={editedVideo.description}
-              onChange={handleEditChange}
-              className="bg-gray-700 text-white px-2 py-1 rounded w-full mb-3"
-              disabled={isUploading}
+              onChange={(e) =>
+                setEditedVideo({ ...editedVideo, description: e.target.value })
+              }
+              placeholder="Description"
+              className="w-full p-2 bg-[#2c2c2c] rounded border border-gray-600 focus:ring-2 focus:ring-purple-600 outline-none"
+              rows={4}
             />
 
-            <label className="block mb-2">Thumbnail</label>
             <FileUpload
               onFileSelect={handleFileChange}
-              acceptedFileTypes="image/*"
+              acceptedFileTypes={{ "image/*": [".jpg", ".png", ".webp"] }}
               disabled={isUploading}
             />
 
-            <div className="flex justify-end mt-4 space-x-2">
+            <div className="flex justify-end gap-2">
               <button
                 onClick={handleEditSubmit}
-                className={`bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-700 focus:outline-none ${isUploading ? "cursor-not-allowed bg-gray-500" : ""}`}
                 disabled={isUploading}
+                className="bg-green-600 hover:bg-green-700 px-4 py-2 rounded"
               >
-                {isUploading ? (
-                  <span className="flex items-center gap-2">
-                    <svg className="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
-                    </svg>
-                    Saving...
-                  </span>
-                ) : (
-                  "Save"
-                )}
+                {isUploading ? "Saving..." : "Save"}
               </button>
               <button
                 onClick={() => setIsEditing(false)}
-                className="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-700 focus:outline-none"
+                className="bg-red-600 hover:bg-red-700 px-4 py-2 rounded"
               >
                 Cancel
               </button>
@@ -183,23 +133,28 @@ const VideoTable = ({ video }) => {
         </div>
       )}
 
-      {/* Delete Confirmation Modal */}
+      {/* Delete Modal */}
       {isDeleting && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="bg-gray-800 p-6 rounded-lg w-96 text-white">
-            <h3 className="text-lg font-semibold mb-4">Delete Video</h3>
-            <p>Are you sure you want to delete this video? Once it's deleted, you won't be able to recover it.</p>
-
-            <div className="flex justify-end mt-4 space-x-2">
+        <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50">
+          <div className="bg-[#1e1e1e] p-6 rounded-xl text-white shadow-xl space-y-4 max-w-sm w-[90%]">
+            <h2 className="text-lg font-bold">Delete Video</h2>
+            <p className="text-gray-400">
+              Are you sure you want to delete this video?
+            </p>
+            <div className="flex justify-end gap-2">
               <button
-                onClick={handleDeleteCancel}
-                className="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-700 focus:outline-none"
+                onClick={() => setIsDeleting(false)}
+                className="px-4 py-2 bg-gray-600 rounded hover:bg-gray-700"
               >
                 Cancel
               </button>
               <button
-                onClick={handleDeleteConfirm}
-                className="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-700 focus:outline-none"
+                onClick={async () => {
+                  await deleteVideo(video._id);
+                  setIsDeleting(false);
+                  window.location.reload();
+                }}
+                className="px-4 py-2 bg-red-600 rounded hover:bg-red-700"
               >
                 Delete
               </button>
@@ -209,6 +164,6 @@ const VideoTable = ({ video }) => {
       )}
     </>
   );
-}
+};
 
 export default VideoTable;

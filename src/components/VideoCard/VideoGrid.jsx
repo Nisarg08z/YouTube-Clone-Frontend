@@ -16,7 +16,7 @@ const VideoGrid = ({ videos, hideUploader, isHorizontal, playList }) => {
       ))}
     </div>
   ) : (
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-4 gap-y-6 justify-items-center justify-center">
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 justify-center">
       {videos.map((video) => (
         <VideoCard
           key={video._id}
