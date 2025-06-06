@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { publishVideo } from "../../utils/api";
 import FileUpload from "./FileUpload";
+import toast from 'react-hot-toast';
 
 const VideoUpload = ({ userDetail }) => {
   const [thumbnail, setThumbnail] = useState(null);
@@ -13,7 +14,7 @@ const VideoUpload = ({ userDetail }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!thumbnail || !videoFile || !title || !description) {
-      alert("All fields are required");
+      toast.error("All fields are required");
       return;
     }
 
@@ -26,7 +27,7 @@ const VideoUpload = ({ userDetail }) => {
 
     try {
       await publishVideo(formData);
-      alert("Video uploaded successfully!");
+      toast.success("Video uploaded successfully!");
       setIsOpen(false);
       setThumbnail(null);
       setVideoFile(null);
@@ -35,7 +36,7 @@ const VideoUpload = ({ userDetail }) => {
       window.location.reload();
     } catch (error) {
       console.error("Upload failed:", error);
-      alert("Failed to upload video");
+      toast.error("Failed to upload video");
     } finally {
       setIsUploading(false);
     }
