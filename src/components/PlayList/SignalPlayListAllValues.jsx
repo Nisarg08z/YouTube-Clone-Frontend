@@ -1,6 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { getPlaylistById, checkVideoExists, removeVideoFromPlaylist } from "../../utils/api";
+import {
+  getPlaylistById,
+  checkVideoExists,
+  removeVideoFromPlaylist,
+} from "../../utils/api";
 import { VideoGrid } from "../VideoCard";
 import PlayListDetails from "./PlayListDetails";
 
@@ -15,14 +19,13 @@ const SignalPlayListAllValues = () => {
       try {
         const data = await getPlaylistById(playlistId);
 
-        // Filter videos: Only keep published & existing ones
         const validVideos = await Promise.all(
           data.videos.map(async (video) => {
-            if (!video.isPublished) return null; // Skip unpublished videos
+            if (!video.isPublished) return null;
 
             const exists = await checkVideoExists(video._id);
             if (!exists) {
-              await removeVideoFromPlaylist(video._id, playlistId); // Remove from playlist
+              await removeVideoFromPlaylist(video._id, playlistId);
               return null;
             }
 
@@ -30,7 +33,7 @@ const SignalPlayListAllValues = () => {
           })
         );
 
-        setPlayListVideo(validVideos.filter(Boolean)); // Remove null values
+        setPlayListVideo(validVideos.filter(Boolean));
         setPlayListDetails(data);
       } catch (error) {
         console.error("Error fetching PlayList:", error);
@@ -42,18 +45,28 @@ const SignalPlayListAllValues = () => {
     fetchPlayList();
   }, [playlistId]);
 
-  if (loading) return <p>Loading...</p>;
+  if (loading)
+    return (
+      <div className="min-h-screen flex justify-center items-center text-white text-lg">
+        Loading...
+      </div>
+    );
 
   return (
-    <div className="min-h-screen p-2 flex flex-col md:flex-row gap-4">
-      {/* Left Section - Playlist Details */}
-      <div className="w-[50%]">
+    <div className="min-h-screen w-full px-4 py-6 max-w-7xl mx-auto flex flex-col gap-6 lg:flex-row lg:gap-10">
+      {/* Playlist Details */}
+      <div className="w-full lg:w-[40%]">
         <PlayListDetails playList={playListDetails} />
       </div>
 
-      {/* Right Section - Playlist Videos */}
-      <div className="w-[50%] flex flex-col overflow-hidden">
-        <VideoGrid videos={playListVideo} hideUploader={false} isHorizontal={true} playList={playListDetails}/>
+      {/* Videos Section */}
+      <div className="w-full lg:w-[60%]">
+        <VideoGrid
+          videos={playListVideo}
+          hideUploader={false}
+          isHorizontal={true}
+          playList={playListDetails}
+        />
       </div>
     </div>
   );

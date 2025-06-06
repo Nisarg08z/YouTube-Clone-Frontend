@@ -113,69 +113,93 @@ const VideoDetails = ({ video, userId }) => {
     };
 
     return (
-        <div className="bg-black w-full text-white p-4 rounded-lg border border-gray-700 relative transition-all duration-300">
-            <span className="text-gray-200 font-bold text-lg break-words">
-                {video?.title}
-            </span>
-            <p className="break-words h-auto w-[75%]">
+        <div className="bg-[#1e1e1e] border border-gray-700 w-full text-white p-4 rounded-lg">
+            <h1 className="text-lg sm:text-xl font-bold mb-2 break-words">{video?.title}</h1>
+
+            <p className="text-gray-300 text-sm sm:text-base mb-2 w-full sm:w-3/4 break-words">
                 {video?.description?.slice(0, maxLength) || "No Description"}
                 {video?.description?.length > maxLength && !showFull && " ..."}
-                {showFull && video?.description?.length > maxLength && (
-                    <span className="text-gray-400">{video?.description?.slice(maxLength)}</span>
+                {showFull && (
+                    <span className="text-gray-500">{video?.description?.slice(maxLength)}</span>
                 )}
             </p>
-            <p className="text-gray-400 text-sm">
+
+            <p className="text-gray-400 text-xs sm:text-sm mb-3">
                 {video?.views} Views • {formatDistanceToNow(new Date(video?.createdAt))} ago
             </p>
 
-
-            <div className="flex items-center mt-3">
-                <img src={user?.data?.avatar || "https://via.placeholder.com/40"} alt="User" className="w-10 h-10 rounded-full" />
-                <div className="ml-3">
+            <div className="flex items-center gap-3 mb-4">
+                <img
+                    src={user?.data?.avatar || "https://via.placeholder.com/40"}
+                    alt="Uploader"
+                    className="w-10 h-10 rounded-full object-cover border border-gray-600"
+                />
+                <div>
                     <Link to={`/profile/${video?.uploader?.username}`}>
-                        <p className="font-bold">{video?.uploader?.username || "Unknown"}</p>
+                        <p className="font-semibold text-sm sm:text-base hover:underline">
+                            {video?.uploader?.username || "Unknown"}
+                        </p>
                     </Link>
-                    <p className="text-gray-400 text-sm">{followCount || 0} Followers</p>
+                    <p className="text-gray-400 text-xs">{followCount || 0} Followers</p>
                 </div>
             </div>
 
+            <div className="flex flex-wrap gap-2 items-center mb-4">
+                <button
+                    onClick={handleLikeToggle}
+                    className={`px-4 py-2 rounded-lg flex items-center text-sm ${isLiked ? "bg-blue-600" : "bg-gray-800"
+                        }`}
+                >
+                    <img src="/assets/icons/liked.png" alt="like" className="h-5 mr-2" />
+                    {likesCount}
+                </button>
 
-            <div className="absolute top-4 right-4 flex flex-col items-end space-y-2">
-                <div className="flex space-x-2 pb-2">
-                    <button onClick={handleLikeToggle} className={`px-4 py-1 rounded-lg text-white flex items-center ${isLiked ? "bg-blue-600" : "bg-gray-800"}`}>
-                        <img src={"/assets/icons/liked.png"} alt="like" className="h-6" />
-                        <span className="ml-2">{likesCount}</span>
-                    </button>
-
-                    <button onClick={handleSave} className="bg-gray-800 px-4 py-2 rounded-lg text-white flex items-center">
-                        <img src="/assets/icons/collection.png" alt="collection" className="h-6" />
-                        <span className="ml-2">Save</span>
-                    </button>
-                </div>
+                <button
+                    onClick={handleSave}
+                    className="px-4 py-2 rounded-lg bg-gray-800 flex items-center text-sm"
+                >
+                    <img src="/assets/icons/collection.png" alt="collection" className="h-5 mr-2" />
+                    Save
+                </button>
 
                 {video?.uploader?._id !== userDetail?._id ? (
-                    <button onClick={handleFollowToggle} className={`px-4 py-1 rounded-lg ${!isFollowed ? "bg-purple-600" : "bg-gray-800"}`}>
+                    <button
+                        onClick={handleFollowToggle}
+                        className={`px-4 py-2 rounded-lg text-sm ${isFollowed ? "bg-gray-800" : "bg-purple-600"
+                            }`}
+                    >
                         {isFollowed ? "Unfollow" : "Follow"}
                     </button>
                 ) : (
-                    <button onClick={handleProfile} className="px-4 py-1 rounded-lg bg-purple-600 transition">
+                    <button
+                        onClick={handleProfile}
+                        className="px-4 py-2 rounded-lg bg-purple-600 text-sm"
+                    >
                         Watch your Profile
-                    </button>
-                )}
-
-                {video?.description?.length > maxLength && (
-                    <button onClick={() => setShowFull(!showFull)} className="text-white mt-2 flex bottom-3">
-                        {showFull ? "Show Less" : "More"}
                     </button>
                 )}
             </div>
 
+            {video?.description?.length > maxLength && (
+                <button
+                    onClick={() => setShowFull(!showFull)}
+                    className="text-sm text-blue-400 hover:underline mt-1"
+                >
+                    {showFull ? "Show Less" : "More"}
+                </button>
+            )}
+
             {showPlaylistModal && (
-                <CreatePlayListCard videoId={video._id} userId={userId} onClose={() => setShowPlaylistModal(false)} />
+                <CreatePlayListCard
+                    videoId={video._id}
+                    userId={userId}
+                    onClose={() => setShowPlaylistModal(false)}
+                />
             )}
 
             {showLoginPrompt && <LoginPrompt onClose={() => setShowLoginPrompt(false)} />}
         </div>
+
     );
 };
 

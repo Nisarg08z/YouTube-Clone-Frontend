@@ -69,7 +69,7 @@ const Header = () => {
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && handleSearch()}
-            className="w-full p-2 text-sm text-white bg-gray-800 rounded-l-md border border-gray-600 focus:outline-none focus:border-purple-500"
+            className="w-full p-2 text-sm text-white bg-[#2c2c2c] rounded-l-md border border-gray-600 focus:outline-none focus:border-purple-500"
           />
           <button
             onClick={handleSearch}
@@ -167,7 +167,7 @@ const Header = () => {
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && handleSearch()}
-              className="w-full p-3 text-lg text-white bg-gray-800 rounded-l-md border border-gray-600 focus:outline-none"
+              className="w-full p-3 text-lg text-white bg-[#2c2c2c] rounded-l-md border border-gray-600 focus:outline-none"
             />
             <button
               onClick={handleSearch}

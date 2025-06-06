@@ -1,114 +1,146 @@
 import React, { useState, useEffect } from "react";
-import { getUserPlaylists, createPlaylist, saveVideoToPlaylist } from "../../utils/api";
+import {
+  getUserPlaylists,
+  createPlaylist,
+  saveVideoToPlaylist,
+} from "../../utils/api";
+import { IoMdClose } from "react-icons/io";
 
 const CreatePlayListCard = ({ videoId, userId, onClose }) => {
-    const [playlists, setPlaylists] = useState([]);
-    const [newPlaylist, setNewPlaylist] = useState({ name: "", description: "" });
-    const [selectedPlaylists, setSelectedPlaylists] = useState([]);
-    const [isCreating, setIsCreating] = useState(false); 
+  const [playlists, setPlaylists] = useState([]);
+  const [newPlaylist, setNewPlaylist] = useState({ name: "", description: "" });
+  const [selectedPlaylists, setSelectedPlaylists] = useState([]);
+  const [isCreating, setIsCreating] = useState(false);
 
-    // console.log("userid :- ", userId)
-    useEffect(() => {
-        const fetchPlaylists = async () => {
-            try {
-                const userPlaylists = await getUserPlaylists(userId);
-                setPlaylists(userPlaylists);
-                if (userPlaylists.length === 0) {
-                    setIsCreating(true);
-                }
-            } catch (error) {
-                console.error("Error fetching playlists:", error);
-            }
-        };
-        fetchPlaylists();
-    }, [userId]);
-
-    const handleCreatePlaylist = async () => {
-        if (!newPlaylist.name.trim()) return;
-        try {
-            const newPlaylistData = await createPlaylist(newPlaylist.name, newPlaylist.description);
-            setPlaylists((prev) => [...prev, newPlaylistData]);
-            setNewPlaylist({ name: "", description: "" });
-            setIsCreating(false); 
-        } catch (error) {
-            console.error("Error creating playlist:", error);
-        }
+  useEffect(() => {
+    const fetchPlaylists = async () => {
+      try {
+        const userPlaylists = await getUserPlaylists(userId);
+        setPlaylists(userPlaylists);
+        if (userPlaylists.length === 0) setIsCreating(true);
+      } catch (error) {
+        console.error("Error fetching playlists:", error);
+      }
     };
+    fetchPlaylists();
+  }, [userId]);
 
-    const handleSaveToPlaylists = async () => {
-        for (let playlistId of selectedPlaylists) {
-            try {
-                await saveVideoToPlaylist(playlistId, videoId);
-            } catch (error) {
-                console.error("Error saving video to playlist:", error);
-            }
-        }
-        onClose();
-    };
+  const handleCreatePlaylist = async () => {
+    if (!newPlaylist.name.trim()) return;
+    try {
+      const newPlaylistData = await createPlaylist(
+        newPlaylist.name,
+        newPlaylist.description
+      );
+      setPlaylists((prev) => [...prev, newPlaylistData]);
+      setNewPlaylist({ name: "", description: "" });
+      setIsCreating(false);
+    } catch (error) {
+      console.error("Error creating playlist:", error);
+    }
+  };
 
-    return (
-        <div className="fixed inset-0 bg-black bg-opacity-60 flex justify-center items-center">
-            <div className="bg-gray-900 p-5 rounded-lg w-80 text-white">
-                <h2 className="text-lg font-bold mb-4">Save To Playlist</h2>
+  const handleSaveToPlaylists = async () => {
+    for (let playlistId of selectedPlaylists) {
+      try {
+        await saveVideoToPlaylist(playlistId, videoId);
+      } catch (error) {
+        console.error("Error saving video to playlist:", error);
+      }
+    }
+    onClose();
+  };
 
-                {/* Show playlists if they exist */}
-                {!isCreating && playlists.length > 0 ? (
-                    <div className="mb-3">
-                        {playlists.map((playlist) => (
-                            <label key={playlist._id} className="flex items-center mb-2">
-                                <input 
-                                    type="checkbox" 
-                                    className="mr-2"
-                                    checked={selectedPlaylists.includes(playlist._id)}
-                                    onChange={(e) => {
-                                        setSelectedPlaylists(prev => 
-                                            e.target.checked ? [...prev, playlist._id] : prev.filter(id => id !== playlist._id)
-                                        );
-                                    }}
-                                />
-                                {playlist.name}
-                            </label>
-                        ))}
-                    </div>
-                ) : (
-                 
-                    <>
-                        <input
-                            type="text"
-                            placeholder="Enter playlist name"
-                            className="w-full p-2 rounded bg-gray-800 text-white mb-2"
-                            value={newPlaylist.name}
-                            onChange={(e) => setNewPlaylist({ ...newPlaylist, name: e.target.value })}
-                        />
-                        <input
-                            type="text"
-                            placeholder="Enter description"
-                            className="w-full p-2 rounded bg-gray-800 text-white mb-4"
-                            value={newPlaylist.description}
-                            onChange={(e) => setNewPlaylist({ ...newPlaylist, description: e.target.value })}
-                        />
-                    </>
-                )}
+  return (
+    <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center px-4">
+      <div className="relative bg-[#1e1e1e] border border-gray-700 rounded-xl shadow-2xl w-full max-w-md p-6 text-gray-900 dark:text-white max-h-[90vh] overflow-y-auto animate-fade-in">
+        {/* Close Button */}
+        <button
+          onClick={onClose}
+          className="absolute top-3 right-3 text-gray-500 hover:text-red-500 transition text-xl"
+        >
+          <IoMdClose />
+        </button>
 
-                {!isCreating && playlists.length > 0 ? (
-                    <>
-                        <button onClick={() => setIsCreating(true)} className="w-full bg-purple-500 p-2 rounded mb-2">
-                            Create New Playlist
-                        </button>
-                        <button onClick={handleSaveToPlaylists} className="w-full bg-blue-500 p-2 rounded">
-                            Save
-                        </button>
-                    </>
-                ) : (
-                    <button onClick={handleCreatePlaylist} className="w-full bg-green-500 p-2 rounded mb-2">
-                        Save Playlist
-                    </button>
-                )}
+        <h2 className="text-2xl font-semibold mb-4 text-center">Save to Playlist</h2>
 
-                <button onClick={onClose} className="w-full bg-gray-700 p-2 rounded mt-2">Close</button>
-            </div>
+        {/* Playlist Selection */}
+        {!isCreating && playlists.length > 0 ? (
+          <div className="space-y-2 mb-5 max-h-48 overflow-y-auto pr-1 custom-scrollbar">
+            {playlists.map((playlist) => (
+              <label
+                key={playlist._id}
+                className="flex items-center justify-between bg-[#2c2c2c] border border-gray-600 px-3 py-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition"
+              >
+                <span className="truncate">{playlist.name}</span>
+                <input
+                  type="checkbox"
+                  className="accent-purple-600 scale-125 ml-3"
+                  checked={selectedPlaylists.includes(playlist._id)}
+                  onChange={(e) =>
+                    setSelectedPlaylists((prev) =>
+                      e.target.checked
+                        ? [...prev, playlist._id]
+                        : prev.filter((id) => id !== playlist._id)
+                    )
+                  }
+                />
+              </label>
+            ))}
+          </div>
+        ) : (
+          // Create Playlist Form
+          <div className="space-y-3 mb-4">
+            <input
+              type="text"
+              placeholder="Playlist name"
+              className="w-full p-3 rounded-lg bg-[#2c2c2c] border border-gray-600 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
+              value={newPlaylist.name}
+              onChange={(e) =>
+                setNewPlaylist({ ...newPlaylist, name: e.target.value })
+              }
+            />
+            <input
+              type="text"
+              placeholder="Description"
+              className="w-full p-3 rounded-lg bg-[#2c2c2c] border border-gray-600 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
+              value={newPlaylist.description}
+              onChange={(e) =>
+                setNewPlaylist({ ...newPlaylist, description: e.target.value })
+              }
+            />
+          </div>
+        )}
+
+        {/* Action Buttons */}
+        <div className="space-y-2">
+          {!isCreating && playlists.length > 0 ? (
+            <>
+              <button
+                onClick={() => setIsCreating(true)}
+                className="w-full bg-purple-600 hover:bg-purple-700 text-white font-medium py-2 rounded-lg transition"
+              >
+                + Create New Playlist
+              </button>
+              <button
+                onClick={handleSaveToPlaylists}
+                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 rounded-lg transition"
+              >
+                Save Video
+              </button>
+            </>
+          ) : (
+            <button
+              onClick={handleCreatePlaylist}
+              className="w-full bg-green-600 hover:bg-green-700 text-white font-medium py-2 rounded-lg transition"
+            >
+              Save Playlist
+            </button>
+          )}
         </div>
-    );
+      </div>
+    </div>
+  );
 };
 
 export default CreatePlayListCard;

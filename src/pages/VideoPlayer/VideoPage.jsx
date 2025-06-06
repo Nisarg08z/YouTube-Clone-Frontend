@@ -1,10 +1,9 @@
 import React, { useState, useEffect, useContext } from "react";
 import { useParams } from "react-router-dom";
-import { getVideoDetails , addToWatchHistory} from "../../utils/api";
+import { getVideoDetails, addToWatchHistory } from "../../utils/api";
 import { VideoDetails, CommentSection, VideoGrid, VideoPlayer } from "../../components";
 import { UserContext } from "../../contexts/UserContext";
-import { useVideoContext } from '../../contexts/VideoContext';
-
+import { useVideoContext } from "../../contexts/VideoContext";
 
 const VideoPage = () => {
   const { videoId } = useParams();
@@ -33,8 +32,6 @@ const VideoPage = () => {
   }, [videoId]);
 
   useEffect(() => {
-    //console.log(videoId)
-  
     const addWatchHistory = async () => {
       try {
         await addToWatchHistory(videoId);
@@ -42,46 +39,36 @@ const VideoPage = () => {
         console.error("Error adding video to watch history:", error);
       }
     };
-  
+
     addWatchHistory();
   }, [videoId]);
-
-  //console.log("video" , video)
 
   if (loading) return <p>Loading...</p>;
   if (!video) return <p>Video not found</p>;
 
-  return (
-    <div className="min-h-screen p-2 flex flex-col md:flex-row gap-4">
-      {/* Left Section - Video Player */}
-      <div className="w-[65%]">
-
-        <div>
-          <VideoPlayer video={video} />
-        </div>
-
-        <div className="pt-4">
-          <VideoDetails video={video} userId={userDetail?._id}/>
-        </div>
-
-        <div className="pt-4">
-          <CommentSection videoId={videoId} currentUser={userDetail?._id} videoOwner={video?.owner} />
-        </div>
-      </div>
-
-      {/* Right Section - Extend VideoGrid Fully */}
-      <div className="w-[35%] flex flex-col overflow-hidden">
-        {loading ? (
-          <div className="text-center">Loading...</div>
-        ) : error ? (
-          <div className="text-center text-red-500">{error}</div>
-        ) : (
-          <VideoGrid videos={allvideos} hideUploader={false} isHorizontal={true} />
-        )}
-      </div>
+return (
+  <div className="min-h-screen p-2 flex flex-col lg:flex-row gap-4">
+    {/* Left Section on Desktop - Main Video & Details */}
+    <div className="lg:w-[65%] w-full flex flex-col gap-4">
+      <VideoPlayer video={video} />
+      <VideoDetails video={video} userId={userDetail?._id} />
+      <CommentSection videoId={videoId} currentUser={userDetail?._id} videoOwner={video?.owner} />
     </div>
-  );
 
-}
+    {/* Right Section on Desktop - Video Suggestions */}
+    <div className="lg:w-[35%] w-full mb-7">
+      {loading ? (
+        <div className="text-center">Loading...</div>
+      ) : error ? (
+        <div className="text-center text-red-500">{error}</div>
+      ) : (
+        <VideoGrid videos={allvideos} hideUploader={false} isHorizontal={true} />
+      )}
+    </div>
+  </div>
+);
+
+
+};
 
 export default VideoPage;

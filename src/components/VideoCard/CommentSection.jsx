@@ -39,7 +39,6 @@ const CommentSection = ({ videoId, currentUser, videoOwner }) => {
     loadComments();
   }, [videoId, page]);
 
-  // Sorting logic: Logged-in user's comments first, then video owner's, then others (by newest)
   const sortComments = (comments) => {
     return comments.sort((a, b) => {
       if (a.owner?._id === currentUser && b.owner?._id !== currentUser) return -1;
@@ -55,7 +54,6 @@ const CommentSection = ({ videoId, currentUser, videoOwner }) => {
   };
 
   const handleAddOrUpdateComment = async () => {
-
     if (!isLogedin) {
       setShowLoginPrompt(true);
       return;
@@ -63,25 +61,18 @@ const CommentSection = ({ videoId, currentUser, videoOwner }) => {
 
     if (!newComment.trim()) return;
 
-    if (editingCommentId) {
-      try {
+    try {
+      if (editingCommentId) {
         await updateComment(editingCommentId, newComment);
         setEditingCommentId(null);
-        setNewComment("");
-      } catch (error) {
-        console.error("Failed to update comment:", error);
-      }
-    } else {
-      try {
+      } else {
         await addComment(videoId, newComment);
-        setNewComment("");
-      } catch (error) {
-        console.error("Failed to add comment:", error);
       }
+      setNewComment("");
+      fetchUpdatedComments();
+    } catch (error) {
+      console.error("Failed to submit comment:", error);
     }
-
-    // Fetch updated comments after adding or updating
-    fetchUpdatedComments();
   };
 
   const fetchUpdatedComments = async () => {
@@ -94,7 +85,6 @@ const CommentSection = ({ videoId, currentUser, videoOwner }) => {
     }
   };
 
-
   const handleEditComment = (commentId, content) => {
     setEditingCommentId(commentId);
     setNewComment(content);
@@ -104,112 +94,112 @@ const CommentSection = ({ videoId, currentUser, videoOwner }) => {
   const handleDeleteComment = async (commentId) => {
     try {
       await deleteComment(commentId);
-      const updatedTotal = totalComments - 1;
-
-      if (updatedTotal <= limit) {
-        setPage(1);
-      }
-
+      setPage(1);
       fetchUpdatedComments();
     } catch (error) {
       console.error("Failed to delete comment:", error);
     }
   };
 
-
   return (
-    <div className="bg-black w-full text-white p-4 rounded-lg border border-gray-700">
-      <h2>{totalComments} Comments</h2>
-      <input
-        type="text"
-        className="w-full p-2 bg-gray-800 rounded"
-        placeholder="Add a comment..."
-        value={newComment}
-        onChange={(e) => setNewComment(e.target.value)}
-      />
-      <button
-        onClick={handleAddOrUpdateComment}
-        className={`mt-2 px-4 py-2 rounded ${editingCommentId ? "bg-green-500" : "bg-blue-500"} text-white`}
-      >
-        {editingCommentId ? "Update" : "Comment"}
-      </button>
+    <div className="w-full bg-[#1e1e1e] border border-gray-700 text-white p-4 rounded-lg">
+      <h2 className="text-lg sm:text-xl font-semibold mb-3">{totalComments} Comments</h2>
 
-      {comments.map((comment) => (
-        <div key={comment._id} className="border-b border-gray-700 p-4">
-          <div className="flex items-start gap-3">
-            {/* User Avatar */}
-            <img
-              src={comment.owner?.avatar || "/default-avatar.png"}
-              alt="User Avatar"
-              className="w-10 h-10 rounded-full object-cover border border-gray-600"
-            />
+      <div className="flex flex-col sm:flex-row gap-2 items-start sm:items-center">
+        <input
+          type="text"
+          className="flex-1 w-full sm:w-auto p-2 bg-[#2c2c2c] border border-gray-600 rounded text-sm sm:text-base focus:ring-2 focus:ring-purple-500 transition"
+          placeholder="Add a comment..."
+          value={newComment}
+          onChange={(e) => setNewComment(e.target.value)}
+        />
+        <button
+          onClick={handleAddOrUpdateComment}
+          className={`px-4 py-2 rounded text-sm sm:text-base ${editingCommentId ? "bg-green-500" : "bg-blue-500"} text-white`}
+        >
+          {editingCommentId ? "Update" : "Comment"}
+        </button>
+      </div>
 
-            {/* Comment Content */}
-            <div className="flex flex-col w-full">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-white font-semibold text-sm sm:text-base">
-                    {comment.owner?.fullName}
-                    <span className="text-gray-400 text-xs sm:text-sm ml-2">
-                      • {formatCreatedAt(comment?.createdAt)}
-                    </span>
-                  </p>
-                  <Link
-                    to={`/profile/${comment.owner?.username}`}
-                    className="text-xs hover:text-gray-400"
-                  >
-                    @{comment.owner?.username}
-                  </Link>
+      <div className="mt-4 space-y-4">
+        {comments.map((comment) => (
+          <div key={comment._id} className="border-b border-gray-700 pb-4">
+            <div className="flex items-start gap-3">
+              <img
+                src={comment.owner?.avatar || "/default-avatar.png"}
+                alt="User Avatar"
+                className="w-10 h-10 rounded-full object-cover border border-gray-600"
+              />
+
+              <div className="flex-1">
+                <div className="flex justify-between items-start">
+                  <div>
+                    <p className="font-semibold text-sm sm:text-base">
+                      {comment.owner?.fullName}
+                      <span className="text-gray-400 ml-2 text-xs sm:text-sm">
+                        • {formatCreatedAt(comment?.createdAt)}
+                      </span>
+                    </p>
+                    <Link
+                      to={`/profile/${comment.owner?.username}`}
+                      className="text-xs hover:text-gray-400 block"
+                    >
+                      @{comment.owner?.username}
+                    </Link>
+                  </div>
+
+                  {(currentUser === comment.owner?._id || videoOwner === currentUser) && (
+                    <div className="relative">
+                      <button
+                        onClick={() =>
+                          setMenuOpen(menuOpen === comment._id ? null : comment._id)
+                        }
+                        className="text-gray-400 hover:text-white p-2 rounded-full hover:bg-gray-700 transition"
+                      >
+                        <span className="text-xl">⋮</span>
+                      </button>
+
+                      {menuOpen === comment._id && (
+                        <div className="absolute right-0 top-8 w-36 bg-[#2d2d2d] rounded-lg shadow-xl z-20 animate-fadeIn">
+                          {currentUser === comment.owner?._id && (
+                            <button
+                              onClick={() =>
+                                handleEditComment(comment._id, comment.content)
+                              }
+                              className="w-full px-4 py-2 text-left hover:bg-gray-700 text-sm"
+                            >
+                              ✏️ Edit
+                            </button>
+                          )}
+                          <button
+                            onClick={() => handleDeleteComment(comment._id)}
+                            className="w-full px-4 py-2 text-left hover:bg-gray-700 text-sm text-red-500"
+                          >
+                            🗑️ Delete
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  )}
                 </div>
 
-                {/* Options Menu */}
-                {(currentUser === comment.owner?._id || videoOwner === currentUser) && (
-                  <div className="relative">
-                    <button
-                      onClick={() => setMenuOpen(menuOpen === comment._id ? null : comment._id)}
-                      className="text-gray-400 hover:text-white p-1"
-                    >
-                      ⋮
-                    </button>
-
-                    {menuOpen === comment._id && (
-                      <div className="absolute right-0 mt-2 w-32 bg-gray-800 text-white rounded shadow-lg z-10">
-                        {currentUser === comment.owner?._id && (
-                          <button
-                            onClick={() => handleEditComment(comment._id, comment.content)}
-                            className="block px-4 py-2 hover:bg-gray-700 w-full text-left"
-                          >
-                            Edit
-                          </button>
-                        )}
-                        <button
-                          onClick={() => handleDeleteComment(comment._id)}
-                          className="block px-4 py-2 hover:bg-gray-700 w-full text-left text-red-500"
-                        >
-                          Delete
-                        </button>
-                      </div>
-                    )}
-                  </div>
-                )}
+                <p className="text-gray-300 text-sm mt-2">{comment.content}</p>
               </div>
-
-              {/* Comment Text */}
-              <p className="text-gray-300 text-sm mt-2">{comment.content}</p>
             </div>
           </div>
-        </div>
-      ))}
-
+        ))}
+      </div>
 
       {comments.length < totalComments && (
-        <button
-          onClick={() => setPage((prev) => prev + 1)}
-          className="mt-2 px-4 py-2 bg-gray-700 text-white rounded"
-          disabled={loading}
-        >
-          {loading ? "Loading..." : "Show More"}
-        </button>
+        <div className="mt-4 text-center">
+          <button
+            onClick={() => setPage((prev) => prev + 1)}
+            className="px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded"
+            disabled={loading}
+          >
+            {loading ? "Loading..." : "Show More"}
+          </button>
+        </div>
       )}
 
       {showLoginPrompt && <LoginPrompt onClose={() => setShowLoginPrompt(false)} />}

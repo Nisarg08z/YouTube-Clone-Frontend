@@ -15,7 +15,7 @@ function Layout() {
   }, [location.pathname]);
 
   return (
-    <div className="bg-black text-white min-h-screen flex flex-col md:flex-row">
+    <div className="bg-gradient-to-br from-[#0f0f0f] via-[#1a1a1a] to-[#111] text-white min-h-screen flex flex-col md:flex-row">
       <Sidebar collapsed={collapseSidebar} />
       <div className="flex flex-col flex-1">
         <Header />
