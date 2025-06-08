@@ -1,18 +1,44 @@
-import React from 'react';
+import React from "react";
+import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 
-const LoginPrompt = ({ onClose }) => {
+const LoginPrompt = ({
+  onClose,
+  title = "Login Required",
+  message = "Please log in to continue using this feature.",
+  showLogin = true,
+}) => {
+  const navigate = useNavigate();
+
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-70">
-      <div className="bg-gray-800 p-8 rounded-lg w-1/3 shadow-2xl transform transition-all duration-300 scale-95 hover:scale-100">
-        <h2 className="text-2xl font-semibold mb-4 text-white">You need to log in</h2>
-        <p className="text-lg mb-6 text-gray-300">Please log in first.</p>
-        <button
-          onClick={onClose}
-          className="px-6 py-3 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition duration-200"
-        >
-          Close
-        </button>
-      </div>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-70 backdrop-blur-sm px-4">
+      <motion.div
+        initial={{ opacity: 0, scale: 0.9 }}
+        animate={{ opacity: 1, scale: 1 }}
+        exit={{ opacity: 0, scale: 0.9 }}
+        transition={{ duration: 0.25 }}
+        className="bg-[#1e1e1e] text-white rounded-2xl shadow-2xl max-w-md w-full p-6 sm:p-8"
+      >
+        <h2 className="text-xl sm:text-2xl font-bold mb-3 text-center">{title}</h2>
+        <p className="text-sm sm:text-base text-gray-300 text-center mb-6">{message}</p>
+
+        <div className="flex justify-center gap-4">
+          <button
+            onClick={onClose}
+            className="px-5 py-2 bg-gray-700 hover:bg-gray-600 rounded-xl text-sm sm:text-base transition"
+          >
+            Close
+          </button>
+          {showLogin && (
+            <button
+              onClick={() => navigate("/login")}
+              className="px-5 py-2 bg-purple-600 hover:bg-purple-700 rounded-xl text-sm sm:text-base transition"
+            >
+              Log In
+            </button>
+          )}
+        </div>
+      </motion.div>
     </div>
   );
 };

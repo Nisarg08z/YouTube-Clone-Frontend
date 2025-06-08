@@ -31,7 +31,7 @@ const UpdateDetail = () => {
     try {
       type === "avatar" ? await updateAvatar(formData) : await updateCoverImage(formData);
       toast.success(`${type === "avatar" ? "Avatar" : "Cover image"} updated!`);
-    } catch (err) {
+    } catch {
       toast.error("Image upload failed.");
     }
   };

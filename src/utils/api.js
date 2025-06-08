@@ -547,7 +547,7 @@ export const checkVideoExists = async (videoId) => {
   try {
     await axios.get(`${BASE_URL}videos/${videoId}`);
     return true;
-  } catch (error) {
+  } catch {
     return false;
   }
 };

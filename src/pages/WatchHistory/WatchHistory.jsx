@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect } from "react";
 import { VideoGrid, EmptyHistoryPage } from "../../components";
 import { getWatchedVideos } from "../../utils/api";
 

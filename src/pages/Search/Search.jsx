@@ -30,7 +30,7 @@ const Search = () => {
 
   return (
     <div className="p-4">
-      <h2 className="text-white text-2xl font-bold mb-4">Search results for "{query}"</h2>
+      <h2 className="text-white text-2xl font-bold mb-4">Search results for `{query}`</h2>
       {loading ? (
         <p className="text-gray-400">Loading...</p>
       ) : videos.length === 0 ? (

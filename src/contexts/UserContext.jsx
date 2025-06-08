@@ -1,5 +1,5 @@
 import React, { createContext, useState, useEffect } from 'react';
-import { fetchCurrentUser} from '../utils/api';
+import { fetchCurrentUser } from '../utils/api';
 
 export const UserContext = createContext();
 
@@ -13,20 +13,18 @@ export const UserProvider = ({ children }) => {
       const user = await fetchCurrentUser();
       setuserDetail(user.data);
       setisLogedin(true);
-      //console.log(user.data)
-    } catch (error) {
+    } catch {
       try {
         const { accessToken } = await refreshAccessToken();
         localStorage.setItem('token', accessToken);
         await checkLogin();
-      } catch (refreshError) {
+      } catch {
         setisLogedin(false);
         setuserDetail(null);
       }
     }
   };
 
-  
   useEffect(() => {
     checkLogin();
   }, []);

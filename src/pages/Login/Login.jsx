@@ -7,8 +7,7 @@ import toast from 'react-hot-toast';
 
 const Login = () => {
   const navigate = useNavigate();
-  const { isLogedin, setisLogedin } = useContext(UserContext);
-  const { userDetail, setuserDetail } = useContext(UserContext);
+  const { setisLogedin, setuserDetail } = useContext(UserContext);
 
   const [formData, setFormData] = useState({ email: '', password: '' });
   const [errors, setErrors] = useState({});
