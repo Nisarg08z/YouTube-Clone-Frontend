@@ -13,6 +13,7 @@ const Header = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [showMobileSearch, setShowMobileSearch] = useState(false);
   const navigate = useNavigate();
+  const [ isToken , setIsToken ] = useState(false)
 
   const handleLogout = async () => {
     try {
@@ -46,6 +47,10 @@ const Header = () => {
         setIsDropdownOpen(false);
       }
     };
+    const jwt = localStorage.getItem("token")
+    if( jwt ){
+      setIsToken(true);
+    }
     if (isDropdownOpen) {
       document.addEventListener("click", handleOutsideClick);
     }
@@ -91,7 +96,7 @@ const Header = () => {
           <FiSearch />
         </button>
 
-        {!isLogedin ? (
+        {!isToken ? (
           <Link to="/Login">
             <button className="px-4 py-2 bg-purple-600 text-white rounded hover:bg-purple-700 transition">
               Login
