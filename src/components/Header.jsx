@@ -56,7 +56,7 @@ const Header = () => {
       document.addEventListener("click", handleOutsideClick);
     }
     return () => document.removeEventListener("click", handleOutsideClick);
-  }, [isDropdownOpen]);
+  }, [isDropdownOpen , isLogedin]);
 
   return (
     <header className="flex items-center justify-between px-4 py-2 bg-[#1e1e1e] border-b border-gray-800 sticky top-0 z-50">
@@ -97,7 +97,7 @@ const Header = () => {
           <FiSearch />
         </button>
 
-        {!isToken ? (
+        {!isLogedin ? (
           <Link to="/Login">
             <button className="px-4 py-2 bg-purple-600 text-white rounded hover:bg-purple-700 transition">
               Login
