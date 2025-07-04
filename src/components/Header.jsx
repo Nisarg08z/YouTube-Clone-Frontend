@@ -18,6 +18,7 @@ const Header = () => {
   const handleLogout = async () => {
     try {
       await logoutUser();
+      localStorage.removeItem("token")
       setisLogedin(false);
       setuserDetail(null);
       setIsDropdownOpen(false);
