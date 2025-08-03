@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { publishVideo } from "../../utils/api";
 import FileUpload from "./FileUpload";
 import toast from 'react-hot-toast';
+import { grammarCorrect } from "../../utils/api";
 
 const VideoUpload = ({ userDetail }) => {
   const [thumbnail, setThumbnail] = useState(null);
@@ -10,6 +11,7 @@ const VideoUpload = ({ userDetail }) => {
   const [description, setDescription] = useState("");
   const [isOpen, setIsOpen] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -42,6 +44,20 @@ const VideoUpload = ({ userDetail }) => {
     }
   };
 
+  const handleFixGrammar = async () => {
+    setLoading(true);
+    try {
+      const result = await grammarCorrect({ title, description });
+      setTitle(result.data.title);
+      setDescription(result.data.description);
+      toast.success("Grammar fixed!");
+    } catch (error) {
+      toast.error(error.message || "Grammar correction failed");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="pb-6 text-white">
       {/* Top Header */}
@@ -61,9 +77,11 @@ const VideoUpload = ({ userDetail }) => {
       {/* Modal */}
       {isOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 px-4">
-          <div className="bg-[#1e1e1e] border border-gray-700 p-6 rounded-xl w-full max-w-md shadow-lg animate-fade-in text-white">
+          <div className="relative bg-[#1e1e1e] border border-gray-700 p-6 rounded-xl w-full max-w-md shadow-lg animate-fade-in text-white 
+                max-h-[90vh] overflow-y-auto scrollbar-hide">
+
             <h2 className="text-xl font-semibold mb-4 text-white">Upload Video</h2>
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form onSubmit={handleSubmit} className="space-y-4 pb-4">
               <div>
                 <label className="block text-sm mb-1 text-gray-300">Thumbnail</label>
                 <FileUpload onFileSelect={setThumbnail} acceptedFileTypes="image/*" />
@@ -96,57 +114,75 @@ const VideoUpload = ({ userDetail }) => {
                 />
               </div>
 
-              <div className="flex justify-end gap-3 pt-2">
+              <div className="flex justify-between items-center gap-3 pt-4">
                 <button
                   type="button"
-                  onClick={() => setIsOpen(false)}
-                  className="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg transition"
-                  disabled={isUploading}
+                  onClick={handleFixGrammar}
+                  disabled={loading}
+                  className={`px-4 py-2 rounded text-white text-sm ${loading ? "bg-gray-400" : "bg-blue-600 hover:bg-blue-700"
+                    }`}
                 >
-                  Cancel
+                  {loading ? "Correcting..." : "Fix Grammar"}
                 </button>
-                <button
-                  type="submit"
-                  className={`px-4 py-2 rounded-lg transition text-white ${
-                    isUploading
-                      ? "bg-gray-500 cursor-not-allowed"
-                      : "bg-purple-600 hover:bg-purple-700"
-                  }`}
-                  disabled={isUploading}
-                >
-                  {isUploading ? (
-                    <span className="flex items-center gap-2">
-                      <svg
-                        className="animate-spin h-5 w-5 text-white"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <circle
-                          className="opacity-25"
-                          cx="12"
-                          cy="12"
-                          r="10"
-                          stroke="currentColor"
-                          strokeWidth="4"
-                        ></circle>
-                        <path
-                          className="opacity-75"
-                          fill="currentColor"
-                          d="M4 12a8 8 0 018-8v8H4z"
-                        ></path>
-                      </svg>
-                      Uploading...
-                    </span>
-                  ) : (
-                    "Upload"
-                  )}
-                </button>
+
+                <div className="flex gap-3">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsOpen(false);
+                      setDescription("");
+                      setTitle("");
+                      setThumbnail(null);
+                      setVideoFile(null);
+                    }}
+                    className="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg transition"
+                    disabled={isUploading}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    className={`px-4 py-2 rounded-lg transition text-white ${isUploading
+                        ? "bg-gray-500 cursor-not-allowed"
+                        : "bg-purple-600 hover:bg-purple-700"
+                      }`}
+                    disabled={isUploading}
+                  >
+                    {isUploading ? (
+                      <span className="flex items-center gap-2">
+                        <svg
+                          className="animate-spin h-5 w-5 text-white"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <circle
+                            className="opacity-25"
+                            cx="12"
+                            cy="12"
+                            r="10"
+                            stroke="currentColor"
+                            strokeWidth="4"
+                          ></circle>
+                          <path
+                            className="opacity-75"
+                            fill="currentColor"
+                            d="M4 12a8 8 0 018-8v8H4z"
+                          ></path>
+                        </svg>
+                        Uploading...
+                      </span>
+                    ) : (
+                      "Upload"
+                    )}
+                  </button>
+                </div>
               </div>
             </form>
           </div>
         </div>
       )}
+
     </div>
   );
 };

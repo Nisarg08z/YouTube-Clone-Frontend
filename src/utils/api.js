@@ -600,3 +600,21 @@ export const changePassword = async (formData) => {
   }
 }
 
+export const grammarCorrect = async (formData) => {
+  try {
+    const response = await axios.post(
+      `${BASE_URL}ai/grammar-correct`,
+      formData,
+      {
+        withCredentials: true,
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Grammar Correct API Error:", error.response?.data?.message || error.message);
+    throw error.response?.data || error;
+  }
+};
