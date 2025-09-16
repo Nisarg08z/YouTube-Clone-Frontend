@@ -2,6 +2,7 @@ import React, { useState, useContext, useEffect } from "react";
 import { updateAvatar, updateCoverImage, updateAccountDetails } from "../../utils/api";
 import { UserContext } from "../../contexts/UserContext";
 import toast from "react-hot-toast";
+import { getErrorMessage } from "../../utils/error";
 
 const UpdateDetail = () => {
   const userContext = useContext(UserContext);
@@ -31,8 +32,8 @@ const UpdateDetail = () => {
     try {
       type === "avatar" ? await updateAvatar(formData) : await updateCoverImage(formData);
       toast.success(`${type === "avatar" ? "Avatar" : "Cover image"} updated!`);
-    } catch {
-      toast.error("Image upload failed.");
+    } catch (error) {
+      toast.error(getErrorMessage(error, "Image upload failed."));
     }
   };
 
@@ -46,7 +47,7 @@ const UpdateDetail = () => {
       if (error.response?.status === 500) {
         toast.error("Username already exists.");
       } else {
-        toast.error("Something went wrong.");
+        toast.error(getErrorMessage(error, "Failed to update account."));
       }
     } finally {
       setLoading(false);

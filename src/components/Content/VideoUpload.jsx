@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { publishVideo } from "../../utils/api";
 import FileUpload from "./FileUpload";
 import toast from 'react-hot-toast';
+import { getErrorMessage } from '../../utils/error';
 import { grammarCorrect } from "../../utils/api";
 
 const VideoUpload = ({ userDetail }) => {
@@ -38,7 +39,7 @@ const VideoUpload = ({ userDetail }) => {
       window.location.reload();
     } catch (error) {
       console.error("Upload failed:", error);
-      toast.error("Failed to upload video");
+      toast.error(getErrorMessage(error, "Failed to upload video"));
     } finally {
       setIsUploading(false);
     }
@@ -52,7 +53,7 @@ const VideoUpload = ({ userDetail }) => {
       setDescription(result.data.description);
       toast.success("Grammar fixed!");
     } catch (error) {
-      toast.error(error.message || "Grammar correction failed");
+      toast.error(getErrorMessage(error, "Grammar correction failed"));
     } finally {
       setLoading(false);
     }

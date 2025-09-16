@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { changePassword } from "../../utils/api";
 import toast from "react-hot-toast";
+import { getErrorMessage } from "../../utils/error";
 
 const UpdatePassword = () => {
   const [formData, setFormData] = useState({ oldPassword: "", newPassword: "" });
@@ -29,7 +30,7 @@ const UpdatePassword = () => {
       toast.success("Password changed successfully!");
       setFormData({ oldPassword: "", newPassword: "" });
     } catch (error) {
-      toast.error("Failed to change password.");
+      toast.error(getErrorMessage(error, "Failed to change password."));
       if (error.response?.status === 400) {
         setErrors({ oldPassword: "Invalid old password." });
       }

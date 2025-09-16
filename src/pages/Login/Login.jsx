@@ -4,6 +4,7 @@ import { loginUser } from '../../utils/api';
 import { UserContext } from '../../contexts/UserContext';
 import { Loader2 } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { getErrorMessage, mapFriendlyAuthMessage } from '../../utils/error';
 
 const Login = () => {
   const navigate = useNavigate();
@@ -38,11 +39,13 @@ const Login = () => {
         setuserDetail(response.data.user);
         navigate('/');
       } else {
-        toast.error(response.message || 'Login failed!');
+        toast.error(mapFriendlyAuthMessage(response.message || 'Login failed!', response.status));
       }
     } catch (error) {
       console.error('Login error:', error);
-      toast.error(error.response?.data?.message || 'Something went wrong.');
+      const raw = getErrorMessage(error, 'Login failed.');
+      const friendly = mapFriendlyAuthMessage(raw, error?.response?.status);
+      toast.error(friendly);
     } finally {
       setLoading(false);
     }
