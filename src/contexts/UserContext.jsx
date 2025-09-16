@@ -16,8 +16,14 @@ export const UserProvider = ({ children }) => {
       setisLogedin(true);
     } catch {
       try {
-        const { accessToken } = await refreshAccessToken();
-        localStorage.setItem('token', accessToken);
+        const localRefresh = localStorage.getItem('refreshToken');
+        const { accessToken, refreshToken } = await refreshAccessToken(localRefresh || undefined);
+        if (accessToken) {
+          localStorage.setItem('token', accessToken);
+        }
+        if (refreshToken) {
+          localStorage.setItem('refreshToken', refreshToken);
+        }
         await checkLogin();
       } catch {
         setisLogedin(false);

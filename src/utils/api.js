@@ -2,6 +2,20 @@ import axios from 'axios';
 
 const BASE_URL = `${import.meta.env.VITE_BASE_URL}api/v1/`;
 
+axios.defaults.withCredentials = true;
+
+// Attach Authorization header if access token exists (helps on mobile where cookies may be blocked)
+axios.interceptors.request.use((config) => {
+  const token = localStorage.getItem('token');
+  if (token && !config.headers?.Authorization) {
+    config.headers = {
+      ...config.headers,
+      Authorization: `Bearer ${token}`,
+    };
+  }
+  return config;
+});
+
 // Login API
 export const loginUser = async (formData) => {
   try {
@@ -118,11 +132,11 @@ export const fetchCurrentUser = async () => {
 };
 
 // API fetch tokens
-export const refreshAccessToken = async () => {
+export const refreshAccessToken = async (refreshToken) => {
   try {
     const response = await axios.post(
       `${BASE_URL}users/refresh-token`,
-      {},
+      refreshToken ? { refreshToken } : {},
       {
         withCredentials: true,
       }

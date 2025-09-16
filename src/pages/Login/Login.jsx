@@ -34,6 +34,9 @@ const Login = () => {
       setLoading(true);
       const response = await loginUser(formData);
       localStorage.setItem("token", response.data.accessToken);
+      if (response.data?.refreshToken) {
+        localStorage.setItem("refreshToken", response.data.refreshToken);
+      }
       if (response.success) {
         setisLogedin(true);
         setuserDetail(response.data.user);

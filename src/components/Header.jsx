@@ -19,6 +19,7 @@ const Header = () => {
     try {
       await logoutUser();
       localStorage.removeItem("token")
+      localStorage.removeItem("refreshToken")
       setisLogedin(false);
       setuserDetail(null);
       setIsDropdownOpen(false);
