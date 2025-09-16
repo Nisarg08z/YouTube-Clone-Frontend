@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { VideoGrid, EmptyLikePage } from "../../components";
+import { VideoGridSkeleton } from "../../components/Loading";
 import { getLikeVideos } from "../../utils/api";
 
 const LikeVideos = () => {
@@ -23,7 +24,7 @@ const LikeVideos = () => {
         fetchLikedVideos();
     }, []); 
 
-    if (loading) return <div className="text-center">Loading liked videos...</div>;
+    if (loading) return <VideoGridSkeleton />;
     if (error) return <div className="text-center text-red-500">{error}</div>;
 
     return (

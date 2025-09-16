@@ -1,6 +1,7 @@
 import { useEffect, useState, useContext } from "react";
 import { statsContent, videosContent } from "../../utils/api";
 import { StatCard, VideoTableGrid, VideoUpload } from "../../components";
+import { VideoGridSkeleton } from "../../components/Loading";
 import { UserContext } from "../../contexts/UserContext";
 
 const Content = () => {
@@ -32,8 +33,17 @@ const Content = () => {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-64 text-white text-lg">
-        Loading...
+      <div className="p-6">
+        <div className="h-36 bg-[#2c2c2c] rounded-xl animate-pulse" />
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">
+          <div className="h-24 bg-[#2c2c2c] rounded-xl animate-pulse" />
+          <div className="h-24 bg-[#2c2c2c] rounded-xl animate-pulse" />
+          <div className="h-24 bg-[#2c2c2c] rounded-xl animate-pulse" />
+        </div>
+        <div className="mt-8">
+          <div className="h-6 w-40 bg-[#2c2c2c] rounded mb-4 animate-pulse" />
+          <VideoGridSkeleton count={8} />
+        </div>
       </div>
     );
   }

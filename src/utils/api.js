@@ -40,14 +40,41 @@ export const logoutUser = async () => {
 };
 
 // API fetch videos
-export const getVideos = async (query = "") => {
+export const getVideos = async (query = "", page, limit = 20) => {
   try {
-    const response = await axios.get(`${BASE_URL}videos?query=${query}`, {
+    const params = new URLSearchParams();
+    if (query) params.set("query", query);
+    if (typeof page !== "undefined") params.set("page", String(page));
+    if (typeof limit !== "undefined") params.set("limit", String(limit));
+
+    const response = await axios.get(`${BASE_URL}videos?${params.toString()}`, {
       withCredentials: true,
     });
 
-    const publishedVideos = response.data.message.docs.filter(video => video.isPublished);
-    return publishedVideos;
+    const payload = response.data?.message;
+    const docs = payload?.docs || [];
+    const publishedVideos = docs.filter((video) => video.isPublished);
+
+    // Backward compatibility: if page is not provided, return array only
+    if (typeof page === "undefined") {
+      return publishedVideos;
+    }
+
+    const totalPages = payload?.totalPages ?? 0;
+    const currentPage = payload?.page ?? page ?? 1;
+    const hasNextPage = payload?.hasNextPage ?? (currentPage < totalPages);
+
+    return {
+      videos: publishedVideos,
+      pagination: {
+        page: currentPage,
+        limit: payload?.limit ?? limit,
+        totalPages,
+        totalDocs: payload?.totalDocs ?? undefined,
+        hasNextPage,
+        nextPage: payload?.nextPage ?? (hasNextPage ? currentPage + 1 : null),
+      },
+    };
   } catch (error) {
     console.error('API Error:', error.response?.data?.message || error.message);
     throw error.response?.data || error;

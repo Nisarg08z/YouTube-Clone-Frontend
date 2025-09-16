@@ -8,17 +8,37 @@ export const VideoProvider = ({ children }) => {
   const [allvideos, setallVideos] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
 
   const fetchAllVideos = async () => {
     setLoading(true);
     try {
-      const data = await getVideos();
-      setallVideos(data);
+      const { videos, pagination } = await getVideos("", 1, 20);
+      setallVideos(videos);
+      setPage(pagination.nextPage || 2);
+      setHasMore(pagination.hasNextPage);
       //console.log("all" , data)
     } catch (err) {
       setError(err.message);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const loadMoreVideos = async () => {
+    if (!hasMore || isLoadingMore) return;
+    setIsLoadingMore(true);
+    try {
+      const { videos, pagination } = await getVideos("", page, 20);
+      setallVideos((prev) => [...prev, ...videos]);
+      setPage(pagination.nextPage || page + 1);
+      setHasMore(pagination.hasNextPage);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setIsLoadingMore(false);
     }
   };
 
@@ -36,7 +56,7 @@ export const VideoProvider = ({ children }) => {
   };
 
   return (
-    <VideoContext.Provider value={{ uservideos, allvideos, loading, error, fetchAllVideos, fetchUserVideos }}>
+    <VideoContext.Provider value={{ uservideos, allvideos, loading, error, fetchAllVideos, fetchUserVideos, loadMoreVideos, hasMore, isLoadingMore }}>
       {children}
     </VideoContext.Provider>
   );

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { VideoGrid, EmptyHistoryPage } from "../../components";
+import { VideoGridSkeleton } from "../../components/Loading";
 import { getWatchedVideos } from "../../utils/api";
 
 const WatchHistory = () => {
@@ -26,7 +27,7 @@ const WatchHistory = () => {
         fetchWatchedVideos();
     }, []); 
 
-    if (loading) return <div className="text-center">Loading watched videos...</div>;
+    if (loading) return <VideoGridSkeleton />;
     if (error) return <div className="text-center text-red-500">{error}</div>;
 
     return (

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { getVideos } from "../../utils/api";
 import { VideoGrid } from "../../components";
+import { HorizontalVideoSkeletonList } from "../../components/Loading";
 
 const Search = () => {
   const [searchParams] = useSearchParams();
@@ -32,7 +33,7 @@ const Search = () => {
     <div className="p-4">
       <h2 className="text-white text-2xl font-bold mb-4">Search results for `{query}`</h2>
       {loading ? (
-        <p className="text-gray-400">Loading...</p>
+        <HorizontalVideoSkeletonList />
       ) : videos.length === 0 ? (
         <p className="text-gray-400">No videos found.</p>
       ) : (

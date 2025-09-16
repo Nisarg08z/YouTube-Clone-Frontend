@@ -8,7 +8,7 @@ import { motion } from "framer-motion";
 
 
 const Header = () => {
-  const { isLogedin, setisLogedin, userDetail, setuserDetail } = useContext(UserContext);
+  const { isLogedin, setisLogedin, userDetail, setuserDetail, isInitializing } = useContext(UserContext);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [showMobileSearch, setShowMobileSearch] = useState(false);
@@ -97,7 +97,9 @@ const Header = () => {
           <FiSearch />
         </button>
 
-        {!isLogedin ? (
+        {isInitializing ? (
+          <div className="w-24 h-8 rounded bg-[#2c2c2c] animate-pulse" />
+        ) : !isLogedin ? (
           <Link to="/Login">
             <button className="px-4 py-2 bg-purple-600 text-white rounded hover:bg-purple-700 transition">
               Login
