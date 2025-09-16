@@ -10,6 +10,7 @@ import Subscribers from "./Subscribers/Subscribers"
 import Content from './Content/Content'
 import SettingPage from './SettingPage/SettingPage'
 import Search from './Search/Search'
+import NotFound from './NotFound/NotFound'
 
 export
 {
@@ -24,5 +25,6 @@ export
     Subscribers,
     Content,
     SettingPage,
-    Search
+    Search,
+    NotFound
 }
