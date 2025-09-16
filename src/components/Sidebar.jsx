@@ -19,12 +19,18 @@ const Sidebar = ({ collapsed = false }) => {
     { name: "Settings", icon: "settings.png", path: "/Setting" },
   ];
 
+  const publicPaths = ["/"];
+
   const handleNavigation = (path) => {
+    if (publicPaths.includes(path)) {
+      navigate(path);
+      return;
+    }
     if (!isLogedin) {
       navigate("/login");
-    } else {
-      navigate(path);
+      return;
     }
+    navigate(path);
   };
 
   return (

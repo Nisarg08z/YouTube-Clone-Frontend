@@ -22,7 +22,10 @@ const Header = () => {
       setisLogedin(false);
       setuserDetail(null);
       setIsDropdownOpen(false);
-      navigate("/");
+      const isPublicPath = location.pathname === "/" || location.pathname.startsWith("/video/");
+      if (!isPublicPath) {
+        navigate("/login");
+      }
     } catch (error) {
       console.error("Logout failed:", error.message);
     }
